@@ -1,0 +1,112 @@
+---
+// Door: the terrace by the lake fills the first screen and fades into the sand page. The words sit
+// on the fade. The photo drifts slowly as you scroll (transform only, rules in Base.astro).
+import Icon from './Icon.astro';
+import restaurant from '../content/restaurant.json';
+
+const { rating, phone, phoneDisplay, hours, whatsapp } = restaurant;
+---
+
+<section class="door">
+  <div class="media">
+    <div class="zoom">
+      <video class="pic" id="hero-video" muted playsinline width="720" height="1280" poster="/media/hero-poster.webp" preload="none" aria-hidden="true" tabindex="-1"><source src="/media/hero-loop.mp4" type="video/mp4" /></video>
+    </div>
+    <button type="button" class="tap" id="hero-tap" aria-label="Pause the video" aria-pressed="false" hidden></button>
+  </div>
+  <div class="words">
+    <p class="greet" lang="id">Selamat datang</p>
+    <h1 class="display">Rice, sambal and a seat by the lake.</h1>
+    <p class="sub">Made and owned by Indonesians since 2007.</p>
+    <div class="actions" data-hero-actions>
+      <a class="btn btn-primary" href="#book" data-book>Book a table <Icon name="arrow-right" size={18} /></a>
+      <a class="btn" href="/menu/">See the menu</a>
+    </div>
+    <p class="proof"><a href={rating.url} rel="noopener">{rating.score} on Google, {rating.count} reviews</a><span class="dot" aria-hidden="true"> · </span><span>{hours.display}</span></p>
+    <p class="phone"><a class="textlink" href={`tel:${phone}`}><Icon name="phone" size={18} />Call {phoneDisplay}</a>{whatsapp && <a class="textlink" href={`https://wa.me/${whatsapp}`} rel="noopener"><Icon name="whatsapp" size={18} />WhatsApp</a>}</p>
+  </div>
+</section>
+
+<style>
+  .door { position: relative; }
+  .media { position: relative; height: 44svh; min-height: 300px; overflow: clip; }
+  .greet { font: italic 400 1.25rem/1.2 var(--font-display); color: var(--clay); margin-bottom: 8px; }
+  .media::after { content: ''; position: absolute; inset: 0 0 -1px 0; background: linear-gradient(to bottom, transparent 0%, transparent 38%, color-mix(in srgb, var(--sand) 80%, transparent) 62%, var(--sand) 82%); }
+  .zoom { height: 100%; }
+  .pic { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 60%; transform-origin: 50% 0; }
+  .tap { position: absolute; inset: 0; width: 100%; border: 0; padding: 0; background: transparent; cursor: pointer; z-index: 1; }
+  .tap:focus-visible { outline: 3px solid var(--ink); outline-offset: -6px; }
+  .words { position: relative; z-index: 1; margin-top: -64px; padding: 0 var(--gutter) 8px; }
+  .display { max-width: 12ch; font-size: clamp(2.75rem, 1.6rem + 5.4vw, 5rem); }
+  .sub { margin-top: 14px; font: italic 400 1.25rem/1.4 var(--font-display); color: var(--ink); max-width: 26ch; }
+  .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 22px; }
+  .actions .btn { padding-inline: 8px; white-space: nowrap; }
+  .proof { margin-top: 14px; font-size: 0.9375rem; line-height: 1.4; color: var(--muted); display: grid; }
+  .proof a { display: inline-flex; align-items: center; min-height: 44px; }
+  .phone { display: none; margin-top: -6px; flex-wrap: wrap; column-gap: 24px; }
+  .dot { display: none; }
+
+  @media (min-width: 768px) {
+    .phone { display: flex; }
+    .media { height: min(56svh, 560px); }
+    .words { margin-top: -110px; padding-inline: 48px; max-width: 720px; }
+    .actions { grid-template-columns: max-content max-content; }
+    .actions .btn { padding-inline: 40px; }
+    .proof { display: block; }
+    .dot { display: inline; }
+  }
+  /* Desktop: the portrait photo sits on the right and fades into the sand on its left edge,
+     so it is never stretched wider than it is. */
+  @media (min-width: 1000px) {
+    .door { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); height: min(76svh, 720px); align-items: center; }
+    .media { grid-column: 2; grid-row: 1; height: 100%; min-height: 0; }
+    .zoom { position: absolute; inset: 0; }
+    .media::after { background: linear-gradient(to right, var(--sand) 0%, color-mix(in srgb, var(--sand) 60%, transparent) 14%, transparent 42%); }
+    .pic { object-position: 50% 58%; }
+    .words { grid-column: 1; grid-row: 1; margin: 0; padding: 48px 48px 48px max(48px, calc((100vw - 1200px) / 2 + 48px)); max-width: none; }
+    .display { max-width: 14ch; font-size: clamp(3.25rem, 1.8rem + 2.6vw, 4.75rem); }
+  }
+</style>
+
+<script>
+  // The clip plays only when it is allowed: no reduced-motion preference, no Save-Data, not a slow
+  // connection. It pauses when scrolled out of view and rests on its first frame after three plays.
+  const video = document.getElementById('hero-video') as HTMLVideoElement | null;
+  const tap = document.getElementById('hero-tap') as HTMLButtonElement | null;
+  if (video && tap) {
+    const conn = (navigator as unknown as { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
+    const allowed = !matchMedia('(prefers-reduced-motion: reduce)').matches && !conn?.saveData && !/(^|-)2g$/.test(conn?.effectiveType ?? '');
+    if (allowed) {
+      let userPaused = false;
+      let plays = 0;
+      let inView = true;
+      const MAX_PLAYS = 3;
+      video.preload = 'metadata';
+      tap.hidden = false;
+      const label = () => {
+        const resting = plays >= MAX_PLAYS || userPaused;
+        tap.setAttribute('aria-label', resting ? 'Play the video' : 'Pause the video');
+        tap.setAttribute('aria-pressed', String(resting));
+      };
+      const play = () => video.play().catch((e: DOMException) => { if (e.name === 'NotAllowedError') tap.hidden = true; });
+      video.addEventListener('canplay', () => { if (!userPaused && inView && plays < MAX_PLAYS) play(); }, { once: true });
+      video.addEventListener('ended', () => {
+        plays += 1;
+        if (plays < MAX_PLAYS && !userPaused) { video.currentTime = 0; play(); } else { label(); }
+      });
+      tap.addEventListener('click', () => {
+        if (plays >= MAX_PLAYS) { plays = 0; userPaused = false; video.currentTime = 0; play(); }
+        else { userPaused = !userPaused; userPaused ? video.pause() : play(); }
+        label();
+      });
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver(([e]) => {
+          inView = e.isIntersecting;
+          if (!inView) video.pause();
+          else if (!userPaused && plays < MAX_PLAYS) play();
+        }).observe(video);
+      }
+      play();
+    }
+  }
+</script>

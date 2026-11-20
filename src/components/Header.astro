@@ -1,0 +1,50 @@
+---
+// Header. Phone: real logo square and the text link "Call". Desktop (720px and up): logo, three
+// links, and a Book button that appears once the hero's own Book button has scrolled away.
+import { Image } from 'astro:assets';
+import logo from '../assets/logo/betawi-logo-wide.png';
+import restaurant from '../content/restaurant.json';
+---
+
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="/" aria-label="Betawi, home">
+      <Image src={logo} alt="Betawi, Taste of Indonesia" width={145} height={64} densities={[1, 2]} loading="eager" />
+    </a>
+    <nav class="links" aria-label="Main">
+      <a class="textlink" href="/menu/">Menu</a>
+      <a class="textlink" href="/#story">Our story</a>
+      <a class="textlink" href="/#find-us">Find us</a>
+    </nav>
+    <a class="btn btn-primary header-book" href="#book" data-book>Book a table</a>
+    <a class="textlink call" href={`tel:${restaurant.phone}`}>Call</a>
+  </div>
+</header>
+
+<style>
+  .site-header { position: sticky; top: 0; z-index: 40; background: var(--sand); border-bottom: 1px solid color-mix(in srgb, var(--clay) 22%, transparent); }
+  .inner { display: flex; align-items: center; justify-content: space-between; max-width: 1200px; margin-inline: auto; padding-right: var(--gutter); }
+  .brand { display: block; line-height: 0; }
+  .brand :global(img) { width: auto; height: 64px; }
+  .call { min-width: 44px; justify-content: center; }
+  .links, .header-book { display: none; }
+
+  @media (min-width: 720px) {
+    .inner { padding-right: 48px; gap: 32px; justify-content: flex-start; }
+    .links { display: flex; gap: 28px; margin-left: auto; }
+    .call { display: none; }
+    .header-book {
+      display: flex;
+      min-height: 44px;
+      padding: 0 20px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-4px);
+      transition: opacity 0.6s var(--ease), transform 0.6s var(--ease), visibility 0.6s;
+    }
+    :global(html[data-actions-away]) .header-book { opacity: 1; visibility: visible; transform: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .header-book { transform: none !important; transition: none !important; }
+  }
+</style>

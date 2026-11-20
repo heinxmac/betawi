@@ -1,0 +1,173 @@
+{
+  "TODO": [
+    "Footer 'Order delivery on Talabat' link: confirm they want it.",
+    "Story copy is built from public sources (FoodKissed 2019, Khaleej Times 2024). Dimple should confirm or replace it with the owners’ own words and a real photo of the team or kitchen.",
+    "Hours come from the Google listing (every day, 12 PM to 10:30 PM). Confirm with Dimple, including Ramadan, Eid and public holidays.",
+    "Ownership: confirmed by heinx on 20 Nov 2026 (made and owned by Indonesians, since 2007).",
+    "Booking rules are assumptions to confirm with Dimple: last table 1 hour before closing (9:30 PM), tables today need 1 hour notice, a table is held 90 minutes, requests open 21 days ahead, up to 12 guests online.",
+    "Prices confirmed by heinx on 20 Nov 2026.",
+    "Photos are placeholders for the demo (Talabat 400px dishes, 6 stills from the reel). The reel on the first screen is a temporary demo clip.",
+    "WhatsApp PLACEHOLDER (heinx, 20 Nov 2026): set to the landline 97144542329 for now. Replace with the real number before launch. Earlier note: heinx says it is the same number as the studio bot flow; the studio bot handles replies in the background. Leave `whatsapp` empty until heinx gives the number for the sheet fallback."
+  ],
+  "name": "Betawi Restaurant",
+  "shortName": "Betawi",
+  "tagline": "Taste of Indonesia",
+  "description": "Indonesian home cooking by the lake in JLT. Made by Indonesians, the way it's cooked at home. Since 2007.",
+  "whatsapp": "97144542329",
+  "phone": "+97144542329",
+  "phoneDisplay": "04 454 2329",
+  "email": "",
+  "address": {
+    "street": "Lake Terrace Tower, Cluster D",
+    "area": "JLT",
+    "city": "Dubai",
+    "country": "AE",
+    "oneLine": "Lake Terrace Tower, Cluster D, JLT, Dubai",
+    "landmark": "Across from DMCC metro"
+  },
+  "mapsUrl": "https://maps.app.goo.gl/1dQt4Z8NXgz3ds4P9",
+  "rating": {
+    "source": "Google",
+    "score": "4.4",
+    "count": 865,
+    "checkedOn": "2026-11-19",
+    "url": "https://maps.app.goo.gl/1dQt4Z8NXgz3ds4P9"
+  },
+  "hours": {
+    "display": "Every day, 12 PM to 10:30 PM",
+    "help": "Open every day, 12 PM to 10:30 PM.",
+    "days": [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday"
+    ],
+    "week": [
+      {
+        "day": "Monday",
+        "opens": "12:00",
+        "closes": "22:30"
+      },
+      {
+        "day": "Tuesday",
+        "opens": "12:00",
+        "closes": "22:30"
+      },
+      {
+        "day": "Wednesday",
+        "opens": "12:00",
+        "closes": "22:30"
+      },
+      {
+        "day": "Thursday",
+        "opens": "12:00",
+        "closes": "22:30"
+      },
+      {
+        "day": "Friday",
+        "opens": "12:00",
+        "closes": "22:30"
+      },
+      {
+        "day": "Saturday",
+        "opens": "12:00",
+        "closes": "22:30"
+      },
+      {
+        "day": "Sunday",
+        "opens": "12:00",
+        "closes": "22:30"
+      }
+    ],
+    "opens": "12:00",
+    "closes": "22:30",
+    "source": "Google listing, pasted by heinx on 20 Nov 2026"
+  },
+  "tableOrder": {
+    "label": "Order from your table",
+    "url": "https://betawi.e-tips.me",
+    "note": "Their own QR menu and POS. Link from menu-qr.md, read 19 Nov 2026."
+  },
+  "delivery": [
+    {
+      "name": "Talabat",
+      "url": "https://www.talabat.com/uae/restaurant/692983/betawi-jumeirah-lakes-towers--jlt"
+    }
+  ],
+  "instagram": {
+    "handle": "@betawi.jlt",
+    "url": "https://www.instagram.com/betawi.jlt/"
+  },
+  "quote": {
+    "text": "Easy to see that Indonesians are frequent customers, so the food is authentic.",
+    "by": "Marcelo, Google review"
+  },
+  "booking": {
+    "mode": "request-sheet",
+    "maxGuests": 12,
+    "seating": [
+      "Terrace by the lake",
+      "Inside",
+      "No preference"
+    ],
+    "line": "We'll reply on WhatsApp to confirm your table."
+  },
+  "reservations": {
+    "daysAhead": 21,
+    "slotMinutes": 30,
+    "lastSeatingBeforeClose": 60,
+    "noticeMinutes": 60,
+    "maxParty": 12,
+    "durationMinutes": 90,
+    "seating": [
+      "Terrace by the lake",
+      "Inside",
+      "No preference"
+    ]
+  },
+  "story": {
+    "headline": "Jakarta cooking in JLT.",
+    "paragraphs": [
+      "Betawi is made and owned by Indonesians. The name comes from Batavia, the old name of Jakarta.",
+      "We cook the way Indonesian homes and streets do: soto, rendang, sambal. Indonesian chefs cook each dish fresh, with herbs, spices and sauces from Indonesia."
+    ],
+    "sources": [
+      {
+        "claim": "Opened in Dubai in 2007",
+        "source": "FoodKissed, 12 June 2019",
+        "url": "https://foodkissed.com/exploring-budget-friendly-jlt-dining-can-betawi-cafe-answer-your-indonesian-food-cravings/"
+      },
+      {
+        "claim": "Named after old Batavia, now Jakarta; fresh dishes by Indonesian chefs with imported herbs, spices and sauces; feels like a friend’s home",
+        "source": "Khaleej Times restaurant review, 20 August 2024",
+        "url": "https://www.khaleejtimes.com/lifestyle/food/restaurant-review-betawi-restaurant-in-dubai-offers-authentic-indonesian-fare"
+      },
+      {
+        "claim": "Homes and streets of Indonesia",
+        "source": "Betawi’s own Instagram bio"
+      },
+      {
+        "claim": "Press lines are paraphrases of the three linked articles (Rashida Blogs line from its search snippet; read the full post before launch)",
+        "source": "Khaleej Times 2024, FoodKissed 2019, Rashida Blogs 2017"
+      }
+    ],
+    "toConfirm": true,
+    "pressTitle": "In the press",
+    "press": [
+      {
+        "who": "Khaleej Times",
+        "when": "August 2024",
+        "line": "Eating here feels like a meal at a friend’s home. Fresh dishes from Indonesian chefs.",
+        "url": "https://www.khaleejtimes.com/lifestyle/food/restaurant-review-betawi-restaurant-in-dubai-offers-authentic-indonesian-fare"
+      },
+      {
+        "who": "FoodKissed",
+        "when": "June 2019",
+        "line": "Delicious Indonesian food, simple, with quick service and a relaxed room.",
+        "url": "https://foodkissed.com/exploring-budget-friendly-jlt-dining-can-betawi-cafe-answer-your-indonesian-food-cravings/"
+      }]
+  }
+}

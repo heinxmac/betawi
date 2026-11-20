@@ -1,0 +1,122 @@
+/*
+  Betawi design tokens, lock v2 "Clay and lake" (colour study option D). Sampled from the real
+  material: sign green from the storefront (#133B39 on the board, logo #1B4A3F kept as the dark),
+  sand from the umbrella canvas, clay from rendang and the plank table, turmeric from the gorengan.
+  Contrast: ink on sand 13.9, clay on sand 5.0 and on paper 5.6, sand on clay 5.3, sand on green 8.2,
+  ink on turmeric 8.6, turmeric on green 5.4. Turmeric is a fill, a marker or a colour on green:
+  never text on a light page and never under sand text (2.8:1 on clay).
+*/
+:root {
+  --sand: #EFE4CC;
+  --paper: #F8F1E2;
+  --green: #1B4A3F;
+  --deep: #123229;
+  --clay: #8C4F21;
+  --turmeric: #DEA221;
+  --ink: #2A1A10;
+  --muted: #5E4A39;
+  /* Older names, mapped so the menu, dish pages and booking sheet follow the new palette. */
+  --plank: var(--clay);
+  --sambal: var(--clay);
+
+  --font-display: 'Besley', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --radius: 2px;
+  --gutter: 20px;
+  --header-h: 64px;
+  --rule: 1px solid color-mix(in srgb, var(--clay) 40%, transparent);
+  --ease: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-lux: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html {
+  background: var(--sand);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 112.5%;
+  font-size-adjust: from-font;
+  line-height: 1.55;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-padding-top: calc(var(--header-h) + 72px);
+  scroll-behavior: smooth;
+}
+@media (min-width: 1280px) { html { font-size: 125%; } }
+body { margin: 0; background: var(--sand); font-size: 1rem; -webkit-font-smoothing: antialiased; }
+
+h1, h2, h3, p, figure, ul, dl, dd { margin: 0; }
+p, li { text-wrap: pretty; }
+ul { padding: 0; list-style: none; }
+img, video { display: block; max-width: 100%; height: auto; }
+a { color: inherit; }
+[hidden] { display: none !important; }
+::selection { background: var(--clay); color: var(--paper); }
+html { scrollbar-width: thin; scrollbar-color: var(--clay) var(--sand); accent-color: var(--clay); caret-color: var(--clay); }
+
+:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+.on-green :focus-visible, .on-dark :focus-visible { outline-color: var(--turmeric); }
+.index :focus-visible { outline-color: var(--paper); }
+
+.skip-link { position: absolute; left: var(--gutter); top: -100px; z-index: 100; background: var(--green); color: var(--sand); padding: 12px 16px; border-radius: var(--radius); }
+.skip-link:focus { top: 8px; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* Headings: wood-type Besley, sentence case. Never all-caps, never an eyebrow above them. */
+.display { font: 600 clamp(2.125rem, 1.4rem + 3.4vw, 3.75rem) / 1.06 var(--font-display); letter-spacing: -0.015em; text-wrap: balance; }
+.headline { font: 500 clamp(1.75rem, 1.2rem + 2.4vw, 2.75rem) / 1.12 var(--font-display); letter-spacing: -0.01em; text-wrap: balance; }
+.muted { color: var(--muted); }
+
+/* Buttons and links: sentence case, min-height (never a fixed height so text can grow). */
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 56px;
+  padding: 0 28px;
+  border: 1px solid var(--ink);
+  border-radius: var(--radius);
+  font: 600 0.9375rem/1.2 var(--font-sans);
+  letter-spacing: 0.03em;
+  gap: 10px;
+  text-decoration: none;
+  cursor: pointer;
+  background: transparent;
+  color: var(--ink);
+  transition: transform 0.45s var(--ease);
+}
+.btn:active { transform: scale(0.98); }
+@media (hover: hover) { .btn:hover { background: var(--ink); color: var(--sand); } }
+.btn-primary { background: var(--clay); border-color: var(--clay); color: var(--paper); }
+@media (hover: hover) { .btn-primary:hover { background: var(--ink); border-color: var(--ink); } }
+.btn-paper { background: var(--paper); border-color: var(--paper); color: var(--ink); }
+@media (hover: hover) { .btn-paper:hover { background: var(--sand); border-color: var(--sand); color: var(--ink); } }
+.on-dark .btn { border-color: var(--sand); color: var(--sand); }
+@media (hover: hover) { .on-dark .btn:hover { background: var(--sand); color: var(--ink); } }
+.on-dark .btn-paper { border-color: var(--paper); color: var(--ink); }
+.textlink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: var(--plank);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+.textlink:hover { text-decoration-color: var(--ink); }
+
+.price { font-weight: 700; color: var(--sambal); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { transition: none !important; }
+}
+
+.ic { flex: none; transition: transform 0.45s var(--ease); }
+@media (hover: hover) { .btn:hover .ic, .go-link:hover .ic { transform: translateX(3px); } }
+.textlink .ic { margin-right: 8px; }

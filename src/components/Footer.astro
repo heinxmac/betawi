@@ -1,0 +1,48 @@
+---
+// Footer: a sign-off, where and when, the places to find Betawi, and a plain note that this is a demo.
+import Icon from './Icon.astro';
+import restaurant from '../content/restaurant.json';
+const { instagram, delivery, address, hours, phone, phoneDisplay } = restaurant;
+---
+
+<footer class="foot on-dark">
+  <div class="inner">
+    <p class="sign">See you by the lake.</p>
+
+    <div class="cols">
+      <div class="col">
+        <h2 class="lab">Find us</h2>
+        <p>{address.oneLine}</p>
+        <p>{hours.display}</p>
+        <a class="line" href={`tel:${phone}`}><Icon name="phone" size={18} />{phoneDisplay}</a>
+      </div>
+      <div class="col">
+        <h2 class="lab">Follow and order</h2>
+        <a class="line" href={instagram.url} rel="noopener"><Icon name="instagram" size={18} />{instagram.handle}</a>
+        {delivery.map((d) => <a class="line" href={d.url} rel="noopener">Order delivery on {d.name}</a>)}
+        <a class="line" href="/privacy/">Privacy</a>
+      </div>
+    </div>
+
+    <p class="demo">Demo preview designed and built by heinx. The photos and the first-screen clip are placeholders.</p>
+  </div>
+</footer>
+
+<style>
+  .foot { position: relative; background: var(--deep); color: var(--sand); padding: 56px var(--gutter) 40px; margin-top: 64px; }
+  .foot::before { content: ''; position: absolute; left: 0; right: 0; top: -9px; height: 10px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='10'%3E%3Cpath d='M0 10 10 0 20 10Z' fill='%23123229'/%3E%3C/svg%3E") repeat-x 0 100% / 20px 10px; }
+  .inner { max-width: 1200px; margin-inline: auto; display: grid; gap: 32px; justify-items: start; }
+  .sign { font: 500 clamp(2rem, 1.3rem + 3vw, 3.25rem)/1.12 var(--font-display); }
+  .cols { display: grid; gap: 32px; width: 100%; }
+  .col { display: grid; gap: 4px; justify-items: start; align-content: start; }
+  .lab { font: 500 1.25rem/1.2 var(--font-display); margin-bottom: 6px; }
+  .col p { font-size: 1rem; }
+  .line { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; color: var(--sand); font-size: 1rem; font-weight: 500; text-decoration: none; }
+  .line:hover, .line:focus-visible { text-decoration: underline; text-underline-offset: 4px; }
+  .demo { width: 100%; padding-top: 20px; border-top: 1px solid color-mix(in srgb, var(--sand) 28%, transparent); font-size: 0.9375rem; line-height: 1.45; max-width: none; }
+  @media (max-width: 719px) { .foot { padding-bottom: 104px; } }
+  @media (min-width: 720px) {
+    .foot { padding: 80px 48px 48px; }
+    .cols { grid-template-columns: 1fr 1fr; gap: 64px; max-width: 760px; }
+  }
+</style>

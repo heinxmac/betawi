@@ -1,0 +1,170 @@
+---
+// The shared page shell: head (fonts, noindex, share tags), skip link, header, page, bottom bar.
+import '@fontsource/besley/latin-400-italic.css';
+import '@fontsource/besley/latin-500.css';
+import '@fontsource/besley/latin-600.css';
+import '@fontsource/hanken-grotesk/latin-400.css';
+import '@fontsource/hanken-grotesk/latin-500.css';
+import '@fontsource/hanken-grotesk/latin-600.css';
+import '@fontsource/hanken-grotesk/latin-700.css';
+import '../styles/global.css';
+import displayFile from '@fontsource/besley/files/besley-latin-600-normal.woff2?url';
+import bodyFile from '@fontsource/hanken-grotesk/files/hanken-grotesk-latin-400-normal.woff2?url';
+
+import Header from '../components/Header.astro';
+import StickyBar from '../components/StickyBar.astro';
+import Footer from '../components/Footer.astro';
+import BookingSheet from '../components/BookingSheet.astro';
+import restaurant from '../content/restaurant.json';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** true on /menu: the bottom bar shows from the start and its first button reads Home. */
+  menuPage?: boolean;
+  /** Bottom bar: 'back' on dish pages (first button goes to the full menu). */
+  bar?: 'menu' | 'home' | 'back';
+}
+
+const { title, description = restaurant.description, menuPage = false, bar } = Astro.props;
+const barMode = bar ?? (menuPage ? 'home' : 'menu');
+const siteUrl = Astro.site ?? new URL('https://betawi-preview.pages.dev');
+const shareImage = new URL('og-image.jpg', siteUrl).href;
+// Facts only, all from restaurant.json. No rating markup (the rating is a link on the page).
+const ld = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Restaurant',
+  name: restaurant.name,
+  description: restaurant.description,
+  url: siteUrl.href,
+  image: shareImage,
+  telephone: restaurant.phone,
+  servesCuisine: ['Indonesian'],
+  priceRange: 'AED 50-100',
+  acceptsReservations: true,
+  hasMap: restaurant.mapsUrl,
+  sameAs: [restaurant.instagram.url],
+  address: { '@type': 'PostalAddress', streetAddress: restaurant.address.street, addressLocality: restaurant.address.city, addressCountry: restaurant.address.country },
+  openingHoursSpecification: [{ '@type': 'OpeningHoursSpecification', dayOfWeek: restaurant.hours.days, opens: restaurant.hours.opens, closes: restaurant.hours.closes }],
+}).replace(/</g, '\\u003c');
+const pageTitle = title ? `${title} | ${restaurant.shortName}` : `${restaurant.name} | Indonesian home cooking by the lake in JLT, Dubai`;
+---
+
+<!doctype html>
+<html lang="en" data-actions-away={barMode !== 'menu' ? '' : undefined}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <!-- Preview: never listed. Also set in public/_headers and public/robots.txt. -->
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#EFE4CC" />
+    <link rel="preload" href={displayFile} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={bodyFile} as="font" type="font/woff2" crossorigin />
+    {Astro.url.pathname === "/" && <link rel="preload" as="image" href="/media/hero-poster.webp" fetchpriority="high" />}
+    <link rel="icon" href="/favicon.png" type="image/png" sizes="48x48" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={restaurant.name} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={shareImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="The Betawi logo beside the terrace by the lake in JLT" />
+    <meta property="og:locale" content="en_AE" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json" set:html={ld} />
+    <style is:inline id="motion">
+/* ---------------------------------------------------------------------------------------------
+   Motion. Dial: MOTION 2. One orchestrated moment (the first screen), then purposeful scroll
+   reveals and a photo that drifts inside its crop on two wide shots. Hover lifts a dish photo a
+   touch. Dish photos carry over between the list and the dish page (view transition).
+   Transform and opacity only. Everything is opted in under no-preference, so reduced motion gets
+   the finished static page. Scroll-driven parts are progressive enhancement, no fallback needed.
+   --------------------------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+  ::view-transition-old(root), ::view-transition-new(root) { animation-duration: 0.5s; animation-timing-function: var(--ease-lux); }
+  ::view-transition-group(*) { animation-duration: 0.7s; animation-timing-function: var(--ease-lux); }
+
+  @keyframes rise { from { opacity: 0.4; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+  @keyframes drift { from { transform: translateY(-4%) scale(1.1); } to { transform: translateY(4%) scale(1.1); } }
+
+  .door .greet { animation: rise 1.3s var(--ease) backwards; }
+  .door .display { animation: rise 1.3s var(--ease) 0.2s backwards; }
+  .door .sub { animation: rise 1.3s var(--ease) 0.4s backwards; }
+  .door .actions { animation: rise 1.3s var(--ease) 0.6s backwards; }
+  .door .proof { animation: rise 1.3s var(--ease) 0.8s backwards; }
+  .door .zoom { animation: settle 2.2s var(--ease) backwards; }
+  .door .phone { animation: rise 1.3s var(--ease) 1s backwards; }
+
+  @keyframes settle { from { transform: scale(1.12); } to { transform: none; } }
+  @keyframes tile { from { transform: scale(1.14); opacity: 0.4; } to { transform: none; opacity: 1; } }
+  @keyframes maskup { from { transform: translateY(108%); } to { transform: none; } }
+  @keyframes draw { from { transform: scaleX(0); } to { transform: none; } }
+  @keyframes slidel { from { transform: translateX(-14px); } to { transform: none; } }
+  @keyframes slider { from { transform: translateX(14px); } to { transform: none; } }
+  @keyframes teethshift { from { transform: translateX(0); } to { transform: translateX(20px); } }
+  @keyframes wordsout { from { transform: none; } to { transform: translateY(-36px); } }
+  .mk { display: block; overflow: clip; padding-bottom: 0.14em; margin-bottom: -0.14em; }
+  .mk > span { display: block; }
+  @keyframes heroout { from { transform: scale(1) translateY(0); } to { transform: scale(1.12) translateY(6%); } }
+  @keyframes curtain { from { transform: scaleY(0); } to { transform: none; } }
+  @keyframes bandtext { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes shown { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+  [data-gallery] li.shown { animation: shown 0.8s var(--ease) backwards; }
+
+  @supports ((animation-timeline: view()) and (animation-range: entry)) {
+    .reveal { animation: rise linear both; animation-timeline: view(); animation-range: entry 0% entry 65%; }
+    .door .pic { animation: heroout linear both; animation-timeline: view(); animation-range: exit 0% exit 100%; }
+    .mk > span { animation: maskup linear both; animation-timeline: view(); animation-range: entry 5% entry 60%; }
+    .dishrows li::after, .rows li::after { animation: draw linear both; animation-timeline: view(); animation-range: entry 0% entry 70%; }
+    .dishrows li { animation: rise linear both; animation-timeline: view(); animation-range: entry 0% entry 55%; }
+    .dishrows .ph img { animation: tile linear both; animation-timeline: view(); animation-range: entry 0% entry 90%; }
+    .rows .n { animation: slidel linear both; animation-timeline: view(); animation-range: entry 0% entry 100%; }
+    .rows .m { animation: slider linear both; animation-timeline: view(); animation-range: entry 0% entry 100%; }
+    .story .bandbg::before, .index .bandbg::before { animation: teethshift linear both; animation-timeline: --band; animation-range: cover 0% cover 60%; }
+    .door .words { animation: wordsout linear both; animation-timeline: view(); animation-range: exit 0% exit 70%; }
+    .row::after { animation: draw linear both; animation-timeline: view(); animation-range: entry 0% entry 70%; }
+    .row .thumb { animation: tile linear both; animation-timeline: view(); animation-range: entry 0% entry 90%; }
+    .head::after, .top::after { animation: teethshift linear both; animation-timeline: view(); animation-range: exit 0% exit 100%; }
+    .story, .index { view-timeline: --band block; }
+    .bandbg { transform-origin: 50% 0; animation: curtain linear both; animation-timeline: --band; animation-range: cover 0% cover 8%; }
+    .story .reveal, .index .head, .index .rows { animation: bandtext linear both; animation-timeline: --band; animation-range: cover 6% cover 12%; }
+    .grid li img { animation: tile linear both; animation-timeline: view(); animation-range: entry 0% entry 90%; }
+    .lake .drift, .find .wide { animation: drift linear both; animation-timeline: view(); animation-range: cover 0% cover 100%; }
+  }
+}
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    <StickyBar mode={barMode} />
+    <BookingSheet />
+    <script>
+      // The Book buttons in the hero are the only ones shown on the first screen. Once they
+      // scroll out of view, the fixed bottom bar (phone) and the header Book button (desktop)
+      // take over. Only transform and opacity animate. Without JS they stay hidden and the
+      // hero buttons still work.
+      const heroActions = document.querySelector('[data-hero-actions]');
+      if (heroActions && 'IntersectionObserver' in window) {
+        new IntersectionObserver(
+          ([entry]) => {
+            document.documentElement.toggleAttribute('data-actions-away', !entry.isIntersecting);
+          },
+          { rootMargin: `-${56}px 0px 0px 0px` },
+        ).observe(heroActions);
+      } else {
+        // No hero on this page (privacy, 404) or no IntersectionObserver: show them from the start.
+        document.documentElement.setAttribute('data-actions-away', '');
+      }
+    </script>
+  </body>
+</html>

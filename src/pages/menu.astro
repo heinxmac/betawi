@@ -1,0 +1,168 @@
+---
+// /menu: every section on one page, sticky chips, a Vegan chip that filters, "Show all" after 8.
+import Base from '../layouts/Base.astro';
+import DishRow from '../components/DishRow.astro';
+import { categories, pricesConfirmed } from '../lib/menu';
+import type { Category } from '../lib/menu';
+
+const LIMIT = 8;
+const lists: Category[] = categories.filter((c) => c.dishes.length > 0);
+---
+
+<Base title="Menu" menuPage>
+  <div class="head on-dark">
+    <div class="headin">
+      <h1>Menu</h1>
+      <p class="sub">Prices in AED.</p>
+      {!pricesConfirmed && <p class="sub">Preview prices, to be confirmed.</p>}
+    </div>
+  </div>
+
+  <nav class="chips" aria-label="Menu sections">
+    <ul>
+      {categories.map((c) => (
+        <li>
+          {c.dishes.length === 0
+            ? <button type="button" class="chip" data-vegan-chip aria-pressed="false">{c.name}</button>
+            : <a class="chip" href={`#${c.id}`} data-chip={c.id}>{c.name}</a>}
+        </li>
+      ))}
+    </ul>
+  </nav>
+
+  <p class="vegan-note" data-vegan-note hidden>A full vegan list, including a vegan Padang platter.</p>
+
+  <div class="sections">
+    {lists.map((c) => (
+      <section id={c.id} class="section" data-section>
+        <h2 class="headline"><span class="mk"><span>{c.name}</span></span></h2>
+        <ul class="rows" data-rows>
+          {c.dishes.map((d, i) => (
+            <Fragment><DishRow dish={d} /></Fragment>
+          ))}
+        </ul>
+        {c.dishes.length > LIMIT && (
+          <button type="button" class="more" data-more>Show all {c.dishes.length}</button>
+        )}
+      </section>
+    ))}
+  </div>
+</Base>
+
+<style>
+  .head { position: relative; overflow-x: clip; background: var(--clay); color: var(--sand); padding: 40px 0 44px; margin-bottom: 14px; }
+  .head::after { content: ''; position: absolute; left: -20px; right: -20px; bottom: -9px; height: 10px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='10'%3E%3Cpath d='M0 0H20L10 10Z' fill='%238C4F21'/%3E%3C/svg%3E") repeat-x 0 0 / 20px 10px; }
+  .headin { max-width: 1200px; margin-inline: auto; padding-inline: var(--gutter); }
+  h1 { font: 600 clamp(2.5rem, 1.6rem + 4.4vw, 4.5rem) / 1.04 var(--font-display); letter-spacing: -0.015em; }
+  .sub { margin-top: 8px; font-size: 1.125rem; }
+  /* Section navigation: a sticky text row, not pills. The current section has a plank underline. */
+  .chips { position: sticky; top: var(--header-h); z-index: 30; background: var(--sand); border-bottom: var(--rule); }
+  .chips ul { margin: 0; padding: 0 var(--gutter); display: flex; gap: 24px; overflow-x: auto; scrollbar-width: none; max-width: 1200px; margin-inline: auto; }
+  .chips ul::-webkit-scrollbar { display: none; }
+  .chip { flex: none; white-space: nowrap; display: inline-flex; align-items: center; min-height: 48px; padding: 0; border: 0; border-bottom: 3px solid transparent; background: none; color: var(--ink); text-decoration: none; font: 600 1rem/1.2 var(--font-sans); cursor: pointer; margin-bottom: -1px; }
+  .chip[aria-current='true'], .chip[aria-pressed='true'] { border-bottom-color: var(--plank); font-weight: 700; }
+  .chip[aria-pressed='true'] { color: var(--green); }
+  .vegan-note { max-width: 1200px; margin: 16px auto 0; padding-inline: var(--gutter); color: var(--muted); }
+  .sections { max-width: 1200px; margin-inline: auto; padding-bottom: 96px; }
+  .section { padding-top: 40px; scroll-margin-top: calc(var(--header-h) + 72px); }
+  .section > .headline { padding-inline: var(--gutter); margin-bottom: 14px; }
+  .rows { margin: 0; padding: 0; display: block; }
+  .more { display: flex; align-items: center; justify-content: center; margin: 16px var(--gutter) 0; min-height: 56px; width: calc(100% - 2 * var(--gutter)); border: 1px solid var(--ink); border-radius: var(--radius); background: transparent; color: var(--ink); font: 600 0.9375rem/1.2 var(--font-sans); letter-spacing: 0.03em; cursor: pointer; }
+  @media (hover: hover) { .more:hover { background: var(--ink); color: var(--sand); } }
+  @media (min-width: 720px) {
+    .headin, .section > .headline, .vegan-note { padding-inline: 48px; }
+    .chips ul { padding-inline: 48px; flex-wrap: wrap; overflow: visible; gap: 4px 28px; }
+    .rows { display: grid; grid-template-columns: 1fr 1fr; column-gap: 32px; margin-inline: 28px; align-items: start; }
+    .more { margin-inline: 48px; width: auto; padding: 0 40px; display: inline-flex; }
+  }
+</style>
+
+<script>
+  // Chips mark the section in view; the Vegan chip hides every row that is not vegan.
+  const sections = [...document.querySelectorAll<HTMLElement>('[data-section]')];
+  const chips = [...document.querySelectorAll<HTMLAnchorElement>('[data-chip]')];
+  const chipBar = document.querySelector<HTMLElement>('.chips');
+  let current = '';
+  const mark = (id: string) => {
+    if (id === current) return;
+    current = id;
+    chips.forEach((c) => {
+      if (c.dataset.chip !== id) return c.removeAttribute('aria-current');
+      c.setAttribute('aria-current', 'true');
+      // Phone: the chip row scrolls sideways, so bring the marked chip into view.
+      const row = c.closest('ul')!;
+      if (row.scrollWidth > row.clientWidth) row.scrollTo({ left: c.offsetLeft - 20, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    });
+  };
+  // The section in view is the last one whose top has passed the marker line. The line sits where
+  // a tapped chip lands its section (html scroll-padding-top + section scroll-margin-top), and never
+  // above the bottom of the sticky chip row. (Comparing visible ratios picked short sections over
+  // long ones like Drinks.)
+  const landing = sections.length
+    ? parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) + parseFloat(getComputedStyle(sections[0]).scrollMarginTop) + 8
+    : 0;
+  let ticking = false;
+  const update = () => {
+    ticking = false;
+    const line = Math.max((chipBar?.getBoundingClientRect().bottom ?? 120) + 24, landing || 0);
+    const visible = sections.filter((s) => !s.hidden);
+    let id = '';
+    for (const s of visible) {
+      if (s.getBoundingClientRect().top <= line) id = s.id;
+      else break;
+    }
+    // At the very bottom a short last section can never reach the line: mark the last one.
+    if (innerHeight + scrollY >= document.documentElement.scrollHeight - 2 && visible.length) id = visible[visible.length - 1].id;
+    if (id) mark(id);
+    else { current = ''; chips.forEach((c) => c.removeAttribute('aria-current')); }
+  };
+  addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+  update();
+
+  // "Show all N": rows past the first 8 start hidden and come back with the button.
+  sections.forEach((s) => {
+    const rows = [...s.querySelectorAll<HTMLElement>('[data-rows] > li')];
+    const more = s.querySelector<HTMLButtonElement>('[data-more]');
+    if (!more || rows.length <= 8) return;
+    rows.slice(8).forEach((r) => (r.hidden = true));
+    more.addEventListener('click', () => {
+      rows.forEach((r) => (r.hidden = false));
+      more.hidden = true;
+      s.dataset.expanded = '';
+      // The button is gone, so move focus to the first row that just appeared.
+      const first = rows[8];
+      first.tabIndex = -1;
+      first.focus({ preventScroll: true });
+    });
+  });
+
+  const veganChip = document.querySelector<HTMLButtonElement>('[data-vegan-chip]');
+  const wantsVegan = location.hash === '#vegan';
+  const note = document.querySelector<HTMLElement>('[data-vegan-note]');
+  veganChip?.addEventListener('click', () => {
+    const on = veganChip.getAttribute('aria-pressed') !== 'true';
+    veganChip.setAttribute('aria-pressed', String(on));
+    if (note) note.hidden = !on;
+    sections.forEach((s) => {
+      const rows = [...s.querySelectorAll<HTMLElement>('[data-rows] > li')];
+      const more = s.querySelector<HTMLElement>('[data-more]');
+      let shown = 0;
+      const expanded = 'expanded' in s.dataset;
+      rows.forEach((r, i) => {
+        const match = !on || r.hasAttribute('data-vegan');
+        r.hidden = !match || (!on && !expanded && i >= 8);
+        if (match) shown++;
+      });
+      s.hidden = shown === 0;
+      // A chip for a section the filter emptied would lead nowhere: hide it too.
+      const chip = chips.find((c) => c.dataset.chip === s.id);
+      if (chip) chip.parentElement!.hidden = s.hidden;
+      if (more) more.hidden = on || expanded;
+    });
+    // Tapped from deep in the page, the list collapses: go back to the top of the list so the
+    // vegan note and the first vegan rows are in view.
+    if (on) document.querySelector('.head')?.scrollIntoView({ block: 'start' });
+    update();
+  });
+  if (wantsVegan) veganChip?.click();
+</script>

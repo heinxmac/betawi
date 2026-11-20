@@ -1,0 +1,492 @@
+---
+// The booking sheet: a native <dialog> (focus trap, Escape and top layer come with it) with three
+// steps: guests and seating, day and time, your details. Times come from
+// src/lib/slots.js, the same rules the server function uses, so the page and the server always
+// agree. "Send request" posts to /api/book (functions/api/book.js). Only a real "ok" from the
+// server shows "Request sent". While the keys are not added the server says so, and the sheet
+// shows "Booking opens soon", never a false "sent".
+import restaurant from '../content/restaurant.json';
+
+const { reservations, whatsapp, phone, phoneDisplay, booking } = restaurant;
+---
+
+<dialog id="book" class="sheet" aria-labelledby="book-title" data-wa={whatsapp} data-phone={phoneDisplay} data-tel={phone} data-max={reservations.maxParty}>
+  <div class="head">
+    <h2 id="book-title">Book a table</h2>
+    <button type="button" class="close" aria-label="Close" data-close>
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" /></svg>
+    </button>
+  </div>
+
+  <form novalidate data-form>
+    <div class="progress" aria-hidden="true"><span data-bar></span></div>
+    <p class="stepline" data-stepline aria-live="polite">Step 1 of 3</p>
+    <p class="draft" data-draft hidden>We kept your last choices. <button type="button" class="linkbtn" data-fresh>Start fresh</button></p>
+
+    <section data-step="1" aria-labelledby="s1">
+      <h3 id="s1" tabindex="-1">How many guests?</h3>
+      <fieldset class="chips party" data-party>
+        <legend class="visually-hidden">Number of guests</legend>
+      </fieldset>
+      <p class="help">Pick the closest group. You can write the exact number in the notes on the last step.</p>
+      <p class="note" data-large hidden></p>
+      <p class="err" data-err="party" hidden></p>
+
+      <fieldset class="seat">
+        <legend class="lab">Where would you like to sit?</legend>
+        {booking.seating.map((s, i) => (
+          <label class="seg"><input type="radio" name="seating" value={s} checked={i === booking.seating.length - 1} /><span>{s}</span></label>
+        ))}
+      </fieldset>
+      <div class="actions"><button type="button" class="btn btn-primary" data-next>Next</button></div>
+    </section>
+
+    <section data-step="2" aria-labelledby="s2" hidden>
+      <h3 id="s2" tabindex="-1">Day and time</h3>
+      <fieldset class="chips days" data-days>
+        <legend class="lab">Which day?</legend>
+        <div class="cal" data-cal></div>
+        <p class="picked" data-picked aria-live="polite"></p>
+      </fieldset>
+      <p class="err" data-err="day" hidden></p>
+
+      <fieldset class="chips times" data-times hidden>
+        <legend class="lab">What time?</legend>
+        <p class="help" data-time-note></p>
+        <div data-timegroups></div>
+      </fieldset>
+      <p class="err" data-err="time" hidden></p>
+      <div class="actions two">
+        <button type="button" class="btn" data-back>Back</button>
+        <button type="button" class="btn btn-primary" data-next>Next</button>
+      </div>
+    </section>
+
+    <section data-step="3" aria-labelledby="s3" hidden>
+      <h3 id="s3" tabindex="-1">Your details</h3>
+      <dl class="summary" data-summary></dl>
+
+      <div class="f"><label for="b-name">Your name</label><input id="b-name" name="name" autocomplete="name" maxlength="60" placeholder="First name" /><p class="err" data-err="name" hidden></p></div>
+      <div class="f"><label for="b-phone">Mobile number</label><input id="b-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="20" placeholder="05X XXX XXXX" /><p class="help">We confirm your table on WhatsApp.</p><p class="err" data-err="phone" hidden></p></div>
+      <div class="f"><label for="b-notes">Anything we should know? (optional)</label><textarea id="b-notes" name="notes" rows="2" maxlength="440" placeholder="For example: exactly 3 guests, a high chair, or a quiet table."></textarea></div>
+      <div class="f check">
+        <label><input type="checkbox" name="consent" /> <span>Betawi may call or message me on this number about my request. <a href="/privacy/">Privacy</a></span></label>
+        <p class="err" data-err="consent" hidden></p>
+      </div>
+      <!-- Spam trap: people never see this box, bots fill it. -->
+      <div class="trap" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off" /></label></div>
+
+      <button type="submit" class="btn btn-primary send" data-send>Send request</button>
+      <p class="line">{booking.line}</p>
+      <p class="err form-err" data-err="form" role="alert" hidden></p>
+      <div class="fallback" data-fallback hidden>
+        <a class="btn" data-fallback-wa rel="noopener" hidden>Send it on WhatsApp instead</a>
+        <a class="btn" data-fallback-call>Call us</a>
+      </div>
+      <div class="actions"><button type="button" class="btn" data-back>Back</button></div>
+    </section>
+  </form>
+
+  <div class="state" data-state hidden tabindex="-1">
+    <h3 data-state-title></h3>
+    <p data-state-body></p>
+    <dl class="summary" data-state-summary></dl>
+    <a class="btn btn-primary" data-state-wa hidden rel="noopener">Message us on WhatsApp</a>
+    <button type="button" class="btn" data-close>Done</button>
+  </div>
+</dialog>
+
+<style is:global>
+/* Global on purpose: the day, time and guest chips are made by the script, and Astro's scoped
+   styles do not reach elements the script creates. Every selector is locked under #book. */
+#book { padding: 0; border: 0; background: var(--paper); color: var(--ink); width: min(520px, 100vw); max-width: 100vw; max-height: 94svh; margin: auto auto 0; border-radius: 0; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--clay) 45%, transparent) transparent; }
+#book::backdrop { background: color-mix(in srgb, var(--ink) 55%, transparent); }
+#book[open] { animation: up 0.6s var(--ease); }
+#book[open]::backdrop { animation: veil 0.6s var(--ease); }
+@keyframes up { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes veil { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+#book[open], #book[open]::backdrop { animation: none; }
+ }
+@media (min-width: 720px) {
+#book { margin: auto; border-radius: var(--radius); }
+ }
+#book .head { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px 0; }
+#book h2 { font: 500 2rem/1.1 var(--font-display); }
+#book h3 { font: 500 1.5rem/1.2 var(--font-display); margin-bottom: 14px; outline: none; }
+#book .close { width: 48px; height: 48px; display: grid; place-items: center; background: none; border: 0; color: var(--ink); cursor: pointer; border-radius: var(--radius); }
+#book form, #book .state { padding: 8px 20px 24px; }
+#book .progress { height: 3px; background: color-mix(in srgb, var(--plank) 30%, transparent); margin-top: 8px; }
+#book .progress span { display: block; height: 100%; width: 100%; transform-origin: left; transform: scaleX(0.3333); background: var(--clay); transition: transform 0.7s var(--ease); }
+#book .stepline { margin-top: 10px; font-size: 0.875rem; font-weight: 600; color: var(--muted); }
+#book .draft { margin-top: 6px; font-size: 0.875rem; color: var(--muted); }
+#book .linkbtn { background: none; border: 0; padding: 0; min-height: 44px; font: 700 0.875rem/1 var(--font-sans); color: var(--clay); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+#book section[data-step] { margin-top: 18px; animation: stepin 0.55s var(--ease); }
+@keyframes stepin { from { opacity: 0; transform: translateX(14px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+#book section[data-step] { animation: none; }
+#book .progress span { transition: none; }
+ }
+#book fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+#book .lab, #book legend.lab { display: block; font-size: 0.875rem; font-weight: 600; color: var(--muted); margin: 18px 0 8px; padding: 0; }
+#book .f { margin-top: 16px; }
+#book label { display: block; font-size: 0.875rem; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
+#book input:not([type='radio']):not([type='checkbox']), #book textarea { width: 100%; min-height: 52px; padding: 10px 14px; border: 1px solid var(--plank); border-radius: var(--radius); background: var(--paper); color: var(--ink); font: 400 1rem/1.4 var(--font-sans); }
+#book input:focus-visible, #book textarea:focus-visible { outline: 3px solid var(--ink); outline-offset: 1px; }
+#book .f.invalid input:not([type='radio']):not([type='checkbox']), #book .f.invalid textarea { border: 2px solid var(--ink); }
+#book .err { margin-top: 6px; font-size: 0.875rem; font-weight: 600; color: var(--ink); }
+#book .help, #book .note { margin-top: 6px; font-size: 0.875rem; color: var(--muted); }
+#book .note a, #book .help a { color: var(--clay); font-weight: 700; }
+#book .chips input[type='radio'] { position: absolute; opacity: 0; pointer-events: none; }
+#book .chip, #book .party label { position: relative; margin: 0; }
+#book .seat { margin-top: 16px; }
+#book .party { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+#book .party legend { grid-column: 1 / -1; }
+#book .party label span, #book .times label span { display: flex; align-items: center; justify-content: center; min-height: 48px; border: 1px solid var(--plank); border-radius: var(--radius); background: var(--paper); color: var(--ink); font: 600 1rem/1.2 var(--font-sans); text-align: center; cursor: pointer; }
+#book .chips input:checked + span { background: var(--clay); border-color: var(--clay); color: var(--paper); font-weight: 700; }
+#book .chips input:focus-visible + span { outline: 3px solid var(--ink); outline-offset: 2px; }
+#book .chips input:disabled + span { background: transparent; color: color-mix(in srgb, var(--muted) 70%, transparent); border-style: dashed; cursor: not-allowed; text-decoration: line-through; }
+#book .cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; margin-top: 10px; }
+#book .cal .wd { text-align: center; font: 600 0.875rem/1 var(--font-sans); color: var(--muted); padding-bottom: 2px; }
+#book .cal .mo { grid-column: 1 / -1; margin-top: 12px; font: 500 1.25rem/1.2 var(--font-display); }
+#book .cal label { margin: 0; position: relative; }
+#book .cal label span { position: relative; display: grid; place-items: center; min-height: 48px; border: 1px solid color-mix(in srgb, var(--clay) 35%, transparent); border-radius: var(--radius); background: var(--paper); color: var(--ink); cursor: pointer; }
+#book .cal label b { font: 600 1.0625rem/1 var(--font-sans); font-variant-numeric: tabular-nums; }
+#book .cal label.today span::after { content: ''; position: absolute; left: 50%; bottom: 7px; width: 4px; height: 4px; margin-left: -2px; border-radius: 50%; background: var(--clay); }
+#book .cal label.today input:checked + span::after { background: var(--paper); }
+#book .picked { margin: 12px 0 0; min-height: 1.4em; font: 600 1rem/1.4 var(--font-sans); color: var(--clay); }
+#book .times [data-timegroups] { display: grid; gap: 14px; }
+#book .timegroup h4 { margin: 4px 0 8px; font: 500 1.25rem/1.2 var(--font-display); }
+#book .timegrid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+#book .times label { margin: 0; position: relative; }
+#book .seat { display: grid; grid-template-columns: repeat(3, 1fr); }
+#book .seat legend { grid-column: 1 / -1; }
+#book .seg { margin: 0; position: relative; }
+#book .seg input { position: absolute; opacity: 0; pointer-events: none; }
+#book .seg span { display: flex; align-items: center; justify-content: center; text-align: center; min-height: 60px; padding: 4px 6px; border: 1px solid var(--plank); margin-left: -1px; background: var(--paper); color: var(--ink); font-size: 1rem; line-height: 1.2; cursor: pointer; }
+#book .seg:first-of-type span { margin-left: 0; border-radius: var(--radius) 0 0 var(--radius); }
+#book .seg:last-of-type span { border-radius: 0 var(--radius) var(--radius) 0; }
+#book .seg input:checked + span { background: var(--clay); border-color: var(--clay); color: var(--paper); font-weight: 700; }
+#book .seg input:focus-visible + span { outline: 3px solid var(--ink); outline-offset: 2px; position: relative; z-index: 1; }
+#book .actions { display: grid; gap: 10px; margin-top: 22px; }
+#book .actions.two { grid-template-columns: 1fr 2fr; }
+#book .summary { margin: 0 0 6px; display: grid; grid-template-columns: auto 1fr auto; gap: 6px 14px; padding: 14px; border: 1px solid var(--plank); border-radius: var(--radius); align-items: baseline; }
+#book .summary dt { color: var(--muted); font-size: 0.875rem; font-weight: 600; }
+#book .summary dd { margin: 0; font-weight: 600; }
+#book .summary .chg { background: none; border: 0; padding: 0; min-height: 44px; min-width: 44px; font: 700 0.875rem/1 var(--font-sans); color: var(--clay); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+#book .state .summary { grid-template-columns: auto 1fr; }
+#book .check label { display: flex; gap: 10px; align-items: flex-start; color: var(--ink); font-weight: 400; font-size: 0.9375rem; }
+#book .check input { width: 24px; height: 24px; margin-top: 1px; accent-color: var(--clay); flex: none; }
+#book .check a { color: var(--clay); font-weight: 700; }
+#book .trap { position: absolute; left: -9999px; }
+#book .send { width: 100%; margin-top: 20px; }
+#book .line { margin-top: 10px; text-align: center; font-size: 0.875rem; color: var(--muted); }
+#book .form-err { text-align: center; }
+#book .fallback { display: grid; gap: 10px; margin-top: 12px; }
+#book .state { display: grid; gap: 14px; }
+#book .state h3 { font: 500 1.875rem/1.15 var(--font-display); margin: 0; }
+
+</style>
+
+<script>
+  import { bookableDays, dayLabel, dubaiClock, slotOpen, slotTimes, timeLabel } from '../lib/slots.js';
+  import restaurant from '../content/restaurant.json';
+
+  const dialog = document.getElementById('book') as HTMLDialogElement | null;
+  if (dialog) {
+    const $ = <T extends HTMLElement = HTMLElement>(sel: string) => dialog.querySelector<T>(sel)!;
+    const $$ = <T extends HTMLElement = HTMLElement>(sel: string) => [...dialog.querySelectorAll<T>(sel)];
+    const form = $<HTMLFormElement>('[data-form]');
+    const stateBox = $('[data-state]');
+    const wa = dialog.dataset.wa || '';
+    const tel = dialog.dataset.tel || '';
+    const phoneText = dialog.dataset.phone || '';
+    const max = Number(dialog.dataset.max || 12);
+    const STEPS = ['Guests', 'Day and time', 'Your details'];
+    const KEY = 'betawi-booking-draft-v1';
+
+    type Draft = { party: string; seating: string; day: string; time: string; name: string; phone: string; notes: string };
+    const empty = (): Draft => ({ party: '', seating: 'No preference', day: '', time: '', name: '', phone: '', notes: '' });
+    let draft = empty();
+    let step = 1;
+    let sending = false;
+    let opener: HTMLElement | null = null;
+
+    const load = (): Draft | null => {
+      try { const d = JSON.parse(localStorage.getItem(KEY) ?? 'null'); return d && typeof d === 'object' ? { ...empty(), ...d } : null; } catch { return null; }
+    };
+    const save = () => { try { localStorage.setItem(KEY, JSON.stringify(draft)); } catch { /* storage blocked */ } };
+    const forget = () => { try { localStorage.removeItem(KEY); } catch { /* nothing to remove */ } };
+
+    const err = (key: string, msg: string) => {
+      const p = dialog.querySelector<HTMLElement>(`[data-err="${key}"]`);
+      if (!p) return;
+      p.textContent = msg;
+      p.hidden = !msg;
+      p.closest('.f')?.classList.toggle('invalid', Boolean(msg));
+    };
+    const clearErrors = () => ['party', 'day', 'time', 'name', 'phone', 'consent', 'form'].forEach((k) => err(k, ''));
+
+    // ---------- step 1: guests ----------
+    const partyBox = $('[data-party]');
+    // Guests come in groups, not single numbers. The value is the top of the group so the table is
+    // never too small; the exact number goes in the notes if the guest wants to say it.
+    const groups: { from: number; to: number }[] = [];
+    for (let from = 1; from <= max; from += 2) groups.push({ from, to: Math.min(from + 1, max) });
+    if (groups.length > 1 && max - groups[groups.length - 2].to > 0 && groups[groups.length - 1].from === max) groups.pop();
+    if (groups.length > 4) { const last = groups.splice(4); groups.push({ from: last[0].from, to: max }); }
+    const groupLabel = (g: { from: number; to: number }) => (g.from === g.to ? `${g.from}` : `${g.from} to ${g.to}`);
+    const groupValueFor = (n: number) => { const g = groups.find((x) => n >= x.from && n <= x.to); return g ? String(g.to) : ''; };
+    const partyLabel = (v: string) => { const g = groups.find((x) => String(x.to) === v); return g ? groupLabel(g) : v; };
+    const buildParty = () => {
+      const labels: string[] = groups.map((g) => `<label><input type="radio" name="party" value="${g.to}" /><span>${groupLabel(g)}</span></label>`);
+      labels.push(`<label><input type="radio" name="party" value="more" /><span>More than ${max}</span></label>`);
+      partyBox.insertAdjacentHTML('beforeend', labels.join(''));
+    };
+    const large = $('[data-large]');
+    const showLarge = () => {
+      const on = draft.party === 'more';
+      large.hidden = !on;
+      if (on) {
+        large.innerHTML = `For more than ${max} guests, call us on <a href="tel:${tel}">${phoneText}</a>` + (wa ? ` or <a href="https://wa.me/${wa}" rel="noopener">message us on WhatsApp</a>` : '') + ' and we will plan your table together.';
+      }
+    };
+
+    // ---------- step 2: day and time ----------
+    const cal = $('[data-cal]');
+    const picked = $('[data-picked]');
+    const timesBox = $('[data-times]');
+    const timeNote = $('[data-time-note]');
+    const timeGroups = $('[data-timegroups]');
+    let days: string[] = [];
+    const dayName = (d: string, clock: { today: string }) => {
+      if (d === clock.today) return 'Today';
+      const t = new Date(`${clock.today}T12:00:00Z`);
+      t.setUTCDate(t.getUTCDate() + 1);
+      return d === t.toISOString().slice(0, 10) ? 'Tomorrow' : '';
+    };
+    const showPicked = () => {
+      if (!draft.day) { picked.textContent = ''; return; }
+      const nm = dayName(draft.day, dubaiClock());
+      picked.textContent = `${nm ? nm + ', ' : ''}${dayLabel(draft.day)}`;
+    };
+    // The days we take requests for, as a small calendar: Monday first, the month named where it
+    // changes. No separate date box, because every bookable day is already on it.
+    const buildDays = () => {
+      const clock = dubaiClock();
+      days = bookableDays(restaurant);
+      if (draft.day && !days.includes(draft.day)) draft.day = '';
+      const offset = (d: string) => (new Date(`${d}T12:00:00Z`).getUTCDay() + 6) % 7;
+      let html = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((w) => `<span class="wd" aria-hidden="true">${w}</span>`).join('');
+      let month = '';
+      days.forEach((d, i) => {
+        const m = dayLabel(d, { month: 'long' });
+        if (m !== month) {
+          month = m;
+          html += `<span class="mo">${m}</span>`;
+          if (offset(d) > 0) html += `<span class="gap" style="grid-column: span ${offset(d)}"></span>`;
+        } else if (i === 0 && offset(d) > 0) {
+          html += `<span class="gap" style="grid-column: span ${offset(d)}"></span>`;
+        }
+        const today = d === clock.today;
+        html += `<label class="${today ? 'today' : ''}"><input type="radio" name="day" value="${d}" ${draft.day === d ? 'checked' : ''} /><span><b>${dayLabel(d, { day: 'numeric' })}</b><i class="visually-hidden">${today ? 'Today, ' : ''}${dayLabel(d)}</i></span></label>`;
+      });
+      cal.innerHTML = html;
+      showPicked();
+    };
+    const buildTimes = () => {
+      const wasHidden = timesBox.hidden;
+      timesBox.hidden = !draft.day;
+      if (!draft.day) { timeNote.textContent = ''; timeGroups.innerHTML = ''; return; }
+      const times = slotTimes(restaurant);
+      const clock = dubaiClock();
+      const open = times.filter((t) => slotOpen(restaurant, draft.day, t, clock));
+      if (draft.time && !open.includes(draft.time)) draft.time = '';
+      timeNote.textContent = open.length === 0
+        ? 'No more tables can be requested for this day. Please pick another day.'
+        : draft.day === clock.today ? 'Tables today need at least an hour’s notice. Earlier times are crossed out.' : 'We confirm the time on WhatsApp.';
+      const group = (title: string, list: string[]) => list.length === 0 ? '' : `<div class="timegroup"><h4>${title}</h4><div class="timegrid">${list.map((t) => `<label><input type="radio" name="time" value="${t}" ${draft.time === t ? 'checked' : ''} ${open.includes(t) ? '' : 'disabled'} /><span>${timeLabel(t)}</span></label>`).join('')}</div></div>`;
+      timeGroups.innerHTML = group('Lunch', times.filter((t) => t < '17:00')) + group('Dinner', times.filter((t) => t >= '17:00'));
+      if (wasHidden && draft.day) timesBox.scrollIntoView({ block: 'nearest', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    };
+
+    // ---------- step 3: summary ----------
+    const summaryRows = (withChange: boolean): [string, string, number][] => [
+      ['Guests', partyLabel(draft.party), 1],
+      ['Seating', draft.seating, 1],
+      ['Day', draft.day ? dayLabel(draft.day) : '', 2],
+      ['Time', draft.time ? timeLabel(draft.time) : '', 2],
+    ].map(([k, v, s]) => [k as string, v as string, withChange ? (s as number) : 0]);
+    const renderSummary = (target: HTMLElement, withChange: boolean) => {
+      const rows = summaryRows(withChange);
+      target.replaceChildren(...rows.flatMap(([k, v, s]) => {
+        const dt = document.createElement('dt'); dt.textContent = k;
+        const dd = document.createElement('dd'); dd.textContent = v;
+        const out: HTMLElement[] = [dt, dd];
+        if (withChange) {
+          const b = document.createElement('button');
+          b.type = 'button'; b.className = 'chg'; b.textContent = 'Change'; b.setAttribute('aria-label', `Change ${k.toLowerCase()}`);
+          b.addEventListener('click', () => go(s));
+          out.push(b);
+        }
+        return out;
+      }));
+    };
+
+    // ---------- moving between steps ----------
+    const go = (n: number) => {
+      step = n;
+      clearErrors();
+      $$('[data-step]').forEach((s) => (s.hidden = Number(s.dataset.step) !== n));
+      if (n === 2) { buildDays(); buildTimes(); }
+      if (n === 3) renderSummary($('[data-summary]'), true);
+      $('[data-bar]').style.transform = `scaleX(${n / 3})`;
+      $('[data-stepline]').textContent = `Step ${n} of 3`;
+      const h = dialog.querySelector<HTMLElement>(`[data-step="${n}"] h3`);
+      h?.focus({ preventScroll: true });
+      dialog.scrollTo({ top: 0 });
+    };
+    const check = (n: number): boolean => {
+      clearErrors();
+      if (n === 1) {
+        if (!draft.party) { err('party', 'Please choose how many guests.'); return false; }
+        if (draft.party === 'more') { err('party', `For more than ${max} guests, please call us.`); return false; }
+      }
+      if (n === 2) {
+        if (!draft.day) { err('day', 'Please choose a day.'); return false; }
+        if (!draft.time) { err('time', 'Please choose a time.'); return false; }
+        if (!slotOpen(restaurant, draft.day, draft.time)) { err('time', 'That time is too soon now. Please pick a later time or another day.'); buildTimes(); return false; }
+      }
+      return true;
+    };
+
+    // ---------- open and close ----------
+    const open = (from: HTMLElement | null, guests?: number) => {
+      opener = from;
+      stateBox.hidden = true; form.hidden = false;
+      const saved = load();
+      draft = saved && (saved.party || saved.day || saved.name) ? saved : empty();
+      if (guests && guests <= max) draft.party = groupValueFor(guests);
+      else if (/^\d+$/.test(draft.party)) draft.party = groupValueFor(Number(draft.party));
+      const had = Boolean(saved && (saved.party || saved.day || saved.name)) && !guests;
+      $('[data-draft]').hidden = !had;
+      // restore field values
+      $<HTMLInputElement>('#b-name').value = draft.name;
+      $<HTMLInputElement>('#b-phone').value = draft.phone;
+      $<HTMLTextAreaElement>('#b-notes').value = draft.notes;
+      $$<HTMLInputElement>('input[name="party"]').forEach((i) => (i.checked = i.value === draft.party));
+      $$<HTMLInputElement>('input[name="seating"]').forEach((i) => (i.checked = i.value === draft.seating));
+      showLarge();
+      go(1);
+      if (!dialog.open) dialog.showModal();
+      document.documentElement.style.overflow = 'hidden';
+      document.documentElement.toggleAttribute('data-sheet-open', true);
+    };
+    dialog.addEventListener('close', () => {
+      document.documentElement.style.overflow = '';
+      document.documentElement.removeAttribute('data-sheet-open');
+      opener?.focus();
+      if (location.hash === '#book') history.replaceState(null, '', location.pathname + location.search);
+    });
+    dialog.addEventListener('click', (e) => { if (e.target === dialog) dialog.close(); });
+    $$('[data-close]').forEach((b) => b.addEventListener('click', () => dialog.close()));
+
+    document.querySelectorAll<HTMLElement>('[data-book]').forEach((b) =>
+      b.addEventListener('click', (e) => {
+        e.preventDefault();
+        open(b, b.dataset.guests ? Number(b.dataset.guests) : undefined);
+      }),
+    );
+
+    buildParty();
+    if (location.hash === '#book') open(null);
+
+    // ---------- inputs ----------
+    dialog.addEventListener('change', (e) => {
+      const t = e.target as HTMLInputElement;
+      if (t.name === 'party') { draft.party = t.value; showLarge(); err('party', ''); }
+      else if (t.name === 'seating') draft.seating = t.value;
+      else if (t.name === 'day') { draft.day = t.value; err('day', ''); showPicked(); buildTimes(); }
+      else if (t.name === 'time') { draft.time = t.value; err('time', ''); }
+      save();
+    });
+    dialog.addEventListener('input', (e) => {
+      const t = e.target as HTMLInputElement;
+      if (t.name === 'name') draft.name = t.value;
+      else if (t.name === 'phone') draft.phone = t.value;
+      else if (t.name === 'notes') draft.notes = t.value;
+      else return;
+      save();
+    });
+    $$('[data-next]').forEach((b) => b.addEventListener('click', () => { if (check(step)) go(step + 1); }));
+    $$('[data-back]').forEach((b) => b.addEventListener('click', () => go(step - 1)));
+    $('[data-fresh]').addEventListener('click', () => { forget(); open(opener); });
+
+    // ---------- the message for WhatsApp (shown only when a number is set) ----------
+    const message = () =>
+      ["Hi Betawi, I'd like to book a table.", '', `Guests: ${partyLabel(draft.party)}`, `Seating: ${draft.seating}`, `Day: ${dayLabel(draft.day)}`, `Time: ${timeLabel(draft.time)}`, `Name: ${draft.name.trim()}`, ...(draft.notes.trim() ? [`Notes: ${draft.notes.trim()}`] : [])].join('\n');
+
+    const showState = (title: string, body: string, showWa: boolean) => {
+      form.hidden = true;
+      stateBox.hidden = false;
+      $('[data-state-title]').textContent = title;
+      $('[data-state-body]').textContent = body;
+      renderSummary($('[data-state-summary]'), false);
+      const link = $<HTMLAnchorElement>('[data-state-wa]');
+      link.hidden = !(showWa && wa);
+      if (wa) link.href = `https://wa.me/${wa}?text=${encodeURIComponent(message())}`;
+      stateBox.focus();
+    };
+
+    // ---------- send ----------
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (sending) return;
+      clearErrors();
+      const digits = draft.phone.replace(/\D/g, '');
+      let bad = false;
+      if (!draft.name.trim()) { err('name', 'Please add your name.'); bad = true; }
+      if (digits.length < 7 || digits.length > 15) { err('phone', 'Please check your mobile number.'); bad = true; }
+      if (!$<HTMLInputElement>('input[name="consent"]').checked) { err('consent', 'Please tick the box so we can contact you.'); bad = true; }
+      if (bad) { dialog.querySelector<HTMLElement>('.invalid input')?.focus(); return; }
+      if (!slotOpen(restaurant, draft.day, draft.time)) { go(2); err('time', 'That time is too soon now. Please pick a later time or another day.'); return; }
+
+      sending = true;
+      const send = $<HTMLButtonElement>('[data-send]');
+      send.setAttribute('aria-busy', 'true');
+      send.textContent = 'Sending';
+      const fallback = (text: string) => {
+        err('form', text);
+        const f = $('[data-fallback]'); f.hidden = false;
+        $<HTMLAnchorElement>('[data-fallback-call]').href = `tel:${tel}`;
+        const w = $<HTMLAnchorElement>('[data-fallback-wa]'); w.hidden = !wa;
+        if (wa) w.href = `https://wa.me/${wa}?text=${encodeURIComponent(message())}`;
+      };
+      try {
+        const res = await fetch('/api/book', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ party: Number(draft.party), partyLabel: partyLabel(draft.party), seating: draft.seating, day: draft.day, time: draft.time, name: draft.name.trim(), phone: draft.phone.trim(), notes: [`Party size: ${partyLabel(draft.party)}`, draft.notes.trim()].filter(Boolean).join('. '), consent: true, website: (form.elements.namedItem('website') as HTMLInputElement)?.value ?? '' }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok) {
+          forget();
+          showState('Request sent', `Thank you, ${draft.name.trim()}. We will confirm your table on ${draft.phone.trim()} on WhatsApp. Your table is not booked until we confirm.`, true);
+        } else if (res.status === 400) {
+          if (data?.result === 'time passed') { go(2); err('time', 'That time is too soon now. Please pick a later time or another day.'); buildTimes(); }
+          else fallback('We could not read that request. Please check the day, time and your number, or use one of these.');
+        } else if (res.status === 404 || res.status === 405 || res.status === 501 || (Array.isArray(data?.problems) && data.problems.length > 0 && data.problems.every((p: string) => p.endsWith('not set up')))) {
+          showState('Booking opens soon', 'Preview: online requests go live once the booking setup is finished. Nothing was sent.', false);
+        } else {
+          fallback('We could not send your request just now. Please send it another way, and we will reserve your table.');
+        }
+      } catch {
+        fallback('We could not send your request just now. Please send it another way, and we will reserve your table.');
+      } finally {
+        sending = false;
+        send.removeAttribute('aria-busy');
+        send.textContent = 'Send request';
+      }
+    });
+  }
+</script>

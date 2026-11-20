@@ -1,0 +1,16 @@
+# Betawi booking keys for testing on this PC. This file is git-ignored: it never goes into git.
+# Fill the values yourself. The same six names go into Cloudflare Pages (Settings, Variables and
+# Secrets, add each as a Secret) so the live site can use them. Any part left empty is skipped.
+# How to get each value: BOOKING-SETUP.md
+
+# 1. Telegram alert to the restaurant, with one-tap WhatsApp reply buttons
+TELEGRAM_BOT_TOKEN=
+TELEGRAM_CHAT_ID=
+
+# 2. Google Sheet row and Calendar event (the Apps Script in google-sheet/Code.gs)
+SHEET_WEBHOOK_URL=
+SHEET_SECRET=
+
+# 3. Notion card in a bookings database
+NOTION_TOKEN=
+NOTION_DB_ID=

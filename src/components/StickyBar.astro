@@ -1,0 +1,35 @@
+---
+// Fixed bottom bar, phone only. Hidden while the hero Book button is on screen, then slides in.
+// On /menu it shows from the start and its first button reads Home. It hides while the booking
+// sheet is open.
+interface Props { mode?: 'menu' | 'home' | 'back' }
+const { mode = 'menu' } = Astro.props;
+const first = mode === 'home' ? { href: '/', label: 'Home' } : mode === 'back' ? { href: '/menu/', label: 'All dishes' } : { href: '/menu/', label: 'Menu' };
+---
+
+<div class="bar on-dark">
+  <a class="btn" href={first.href}>{first.label}</a>
+  <a class="btn btn-paper" href="#book" data-book>Book a table</a>
+</div>
+
+<style>
+  .bar {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 50;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 12px 12px calc(12px + env(safe-area-inset-bottom));
+    background: var(--deep);
+    border-top: 1px solid color-mix(in srgb, var(--sand) 28%, transparent);
+    transform: translateY(100%);
+    opacity: 0;
+    visibility: hidden;
+    transition: transform 0.6s var(--ease), opacity 0.6s var(--ease), visibility 0.6s;
+  }
+  :global(html[data-actions-away]) .bar { transform: none; opacity: 1; visibility: visible; }
+  :global(html[data-sheet-open]) .bar { transform: translateY(100%); opacity: 0; visibility: hidden; }
+  @media (min-width: 720px) { .bar { display: none; } }
+  @media (prefers-reduced-motion: reduce) { .bar { transform: none; transition: none; } }
+</style>

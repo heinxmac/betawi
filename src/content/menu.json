@@ -1,0 +1,1029 @@
+{
+  "NOTES": [
+    "All Talabat prices look like delivery prices. Confirm every price with Dimple before launch.",
+    "The three QR rows (Nasi Padang Beef Rendang, Soto Betawi, Buntut Balado) come from the QR dine-in menu read 19 Nov 2026.",
+    "pricesConfirmed stays false until the owner confirms the prices.",
+    "Vegan and spicy tags use the lists from the brief. Talabat's 'Vegetarian' label is not used as vegan.",
+    "A dish with photo null has no photo yet. Never show another dish's photo.",
+    "Start here lists six dishes that appear only there.",
+    "pick = a dish a published review singled out. The wording is ours, the source is named in the text. Pairings on the dish pages are our suggestions (src/lib/pairs.ts), to confirm with Dimple.",
+    "Prices confirmed by heinx on 20 Nov 2026. The three QR rows (Rendang, Soto Betawi, Buntut Balado) carry the QR menu prices."
+  ],
+  "pricesConfirmed": true,
+  "askOwner": [
+    "Are the Talabat prices the dine-in prices? Most look like delivery prices.",
+    "Is the Talabat export complete? The QR menu has dishes not in it: Gado Gado, Karedok, Spring Roll Vegetable, Crispy Calamari, Crispy Wonton, Martabak Telor, Indonesian Style Siomay, Seafood Laksa, Soto Ayam, Paket Rendang (169) and Nasi Liwet (179) sharing platters, Martabak Manis, Dadar Gulung, Ice Cendol and more. Which should we add?",
+    "Vegan or vegetarian: Talabat says vegetarian for several dishes the QR menu lists as vegan. Which wording is right for each dish?",
+    "Seafood Combo: Talabat 149, QR menu 179. This is the other way round to most dishes. Which price is right?",
+    "Name conflict: Cakwe (Talabat) or Ca Kwe (QR menu)? We kept Cakwe.",
+    "Name conflict: Tahu Gejerot (Talabat) or Tahu Gejrot (QR menu)? We kept Tahu Gejerot.",
+    "Talabat name typo: Kerupuk (Garlic crakers). Fix it to crackers? We kept the Talabat spelling."
+  ],
+  "categories": [
+    {
+      "id": "start-here",
+      "name": "Start here",
+      "dishes": [
+        {
+          "id": "nasi-padang-ayam",
+          "name": "Nasi Padang Ayam",
+          "desc": "Chicken with jackfruit curry, spicy egg and potato, greens, rice.",
+          "price": 68,
+          "photo": "nasi-padang-ayam.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "iga-bakar",
+          "name": "Iga Bakar",
+          "desc": "Grilled marinated short ribs, clear soup, rice.",
+          "price": 68,
+          "photo": "iga-bakar.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "ayam-geprek",
+          "name": "Ayam Geprek",
+          "desc": "Fried chicken under crushed chilli, sour soup, tempe, rice.",
+          "price": 55,
+          "photo": "ayam-geprek.webp",
+          "tags": [
+            "spicy"
+          ],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "bebek-sambal-ijo",
+          "name": "Bebek Sambal Ijo",
+          "desc": "Fried duck with green chilli sambal.",
+          "price": 70,
+          "photo": "bebek-sambal-ijo.webp",
+          "tags": [
+            "spicy"
+          ],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "seafood-combo",
+          "name": "Seafood Combo",
+          "desc": "Crab, squid, prawns, mussels and corn, for 2 to 3.",
+          "price": 149,
+          "photo": "seafood-combo.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "mpek-mpek",
+          "name": "Mpek Mpek",
+          "desc": "Crispy fish cake in sweet and sour sauce.",
+          "price": 59,
+          "photo": "mpek-mpek.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        }
+      ]
+    },
+    {
+      "id": "rice-platters",
+      "name": "Rice platters",
+      "dishes": [
+        {
+          "id": "nasi-padang-beef-rendang",
+          "name": "Nasi Padang Beef Rendang",
+          "desc": "Tender beef in a rich, slightly spicy sauce.",
+          "price": 52,
+          "photo": null,
+          "tags": [],
+          "priceSource": "qr",
+          "toConfirm": true,
+          "flag": "Not on the Talabat export. Price from the QR dine-in menu, read 19 Nov 2026. Needs a photo. Description from the Khaleej Times (2024) and FoodKissed (2019) reviews, not from Betawi. Confirm.",
+          "pick": "Called exceptional in the same Khaleej Times review."
+        },
+        {
+          "id": "nasi-padang-vegan",
+          "name": "Nasi Padang Vegan",
+          "desc": "Vegan platter with steamed rice, fried tempe, tofu, spicy potato, urap, tempe orek, vegetable curry and green chilli.",
+          "price": 55,
+          "photo": "nasi-padang-vegan.webp",
+          "tags": [
+            "vegan"
+          ],
+          "priceSource": "talabat",
+          "toConfirm": true,
+          "flag": "Vegan per the QR menu, Talabat says vegetarian. Confirm."
+        }
+      ]
+    },
+    {
+      "id": "chicken",
+      "name": "Chicken",
+      "dishes": [
+        {
+          "id": "ayam-goreng-lengkuas",
+          "name": "Ayam Goreng Lengkuas",
+          "desc": "Fried chicken simmered in spice, topped with galangal floss, served with sayur asam (sour soup).",
+          "price": 55,
+          "photo": "ayam-goreng-lengkuas.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "ayam-kremes",
+          "name": "Ayam Kremes",
+          "desc": "Indonesian fried chicken with crunchy flakes on top, served with sayur asam (sour soup).",
+          "price": 55,
+          "photo": "ayam-kremes.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "pecel-ayam",
+          "name": "Pecel Ayam",
+          "desc": "Fried or grilled chicken served with sayur asam (sour soup), fried tempe and fried tofu.",
+          "price": 55,
+          "photo": "pecel-ayam.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        }
+      ]
+    },
+    {
+      "id": "duck",
+      "name": "Duck",
+      "dishes": [
+        {
+          "id": "bebek-goreng-lengkuas",
+          "name": "Bebek Goreng Lengkuas",
+          "desc": "Fried duck simmered in spices, topped with galangal floss, served with sayur asam (sour soup).",
+          "price": 70,
+          "photo": "bebek-goreng-lengkuas.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "bebek-kremes",
+          "name": "Bebek Kremes",
+          "desc": "Fried duck with crunchy flakes on top, served with sayur asam (sour soup), fried tempe and tofu.",
+          "price": 70,
+          "photo": "bebek-kremes.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true,
+          "pick": "Called the highlight of the meal in a Khaleej Times review (August 2024)."
+        },
+        {
+          "id": "pecel-bebek",
+          "name": "Pecel Bebek",
+          "desc": "Fried duck served with urap (vegetables with grated coconut), steamed rice and sambal on the side.",
+          "price": 70,
+          "photo": "pecel-bebek.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        }
+      ]
+    },
+    {
+      "id": "beef",
+      "name": "Beef",
+      "dishes": [
+        {
+          "id": "iga-penyet",
+          "name": "Iga Penyet",
+          "desc": "Fried short ribs with crushed chilli all over, served with rice, fried tempe, tofu and clear soup.",
+          "price": 68,
+          "photo": "iga-penyet.webp",
+          "tags": [
+            "spicy"
+          ],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "buntut-balado",
+          "name": "Buntut Balado",
+          "desc": "Oxtail in chilli balado sauce.",
+          "price": 52,
+          "photo": null,
+          "tags": [
+            "spicy"
+          ],
+          "priceSource": "qr",
+          "toConfirm": true,
+          "flag": "Not on the Talabat export. Price from the QR dine-in menu, read 19 Nov 2026. Needs a photo."
+        }
+      ]
+    },
+    {
+      "id": "fish-seafood",
+      "name": "Fish and seafood",
+      "dishes": [
+        {
+          "id": "ikan-bakar-sambal-matah",
+          "name": "Ikan Bakar Sambal Matah",
+          "desc": "Grilled tilapia with sambal matah, served with sayur asam (sour soup), fried tofu, tempe, salad and steamed rice.",
+          "price": 60,
+          "photo": "ikan-bakar-sambal-matah.webp",
+          "tags": [
+            "spicy"
+          ],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "pecel-ikan",
+          "name": "Pecel Ikan",
+          "desc": "Fried tilapia served with sayur asam (sour soup), fried tempe, fried tofu, salad, steamed rice and sambal on the side.",
+          "price": 55,
+          "photo": "pecel-ikan.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        }
+      ]
+    },
+    {
+      "id": "starters",
+      "name": "Starters and salads",
+      "dishes": [
+        {
+          "id": "bakwan-vegetable",
+          "name": "Bakwan Vegetable",
+          "desc": "Vegetable fritter.",
+          "price": 25,
+          "photo": "bakwan-vegetable.webp",
+          "tags": [
+            "vegan"
+          ],
+          "priceSource": "talabat",
+          "toConfirm": true,
+          "flag": "Vegan per the QR menu, Talabat says vegetarian. Confirm."
+        },
+        {
+          "id": "cakwe",
+          "name": "Cakwe",
+          "desc": "Indonesian fried bread.",
+          "price": 25,
+          "photo": "cakwe.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "gorengan",
+          "name": "Gorengan",
+          "desc": "Variety of appetizers: stuffed tofu, vegetable bakwan and tempeh mendoan.",
+          "price": 45,
+          "photo": "gorengan.webp",
+          "tags": [
+            "vegan"
+          ],
+          "priceSource": "talabat",
+          "toConfirm": true,
+          "flag": "Vegan per the QR menu, Talabat says vegetarian. Confirm. Gorengan includes stuffed tofu (Tahu Isi), which is not on the QR vegan list. Check the vegan tag."
+        },
+        {
+          "id": "tahu-gejerot",
+          "name": "Tahu Gejerot",
+          "desc": "Fried tofu with sweet and spicy sauce.",
+          "price": 32,
+          "photo": "tahu-gejerot.webp",
+          "tags": [
+            "vegan",
+            "spicy"
+          ],
+          "priceSource": "talabat",
+          "toConfirm": true,
+          "flag": "Vegan per the QR menu, Talabat says vegetarian. Confirm."
+        },
+        {
+          "id": "tahu-isi",
+          "name": "Tahu Isi",
+          "desc": "Stuffed vegetable tofu.",
+          "price": 30,
+          "photo": "tahu-isi.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true,
+          "flag": "Talabat says vegetarian, not on the QR vegan list. Confirm."
+        },
+        {
+          "id": "tempe-mendoan",
+          "name": "Tempe Mendoan",
+          "desc": "Fried battered tempeh (fermented soybean) with sliced scallions.",
+          "price": 32,
+          "photo": "tempe-mendoan.webp",
+          "tags": [
+            "vegan"
+          ],
+          "priceSource": "talabat",
+          "toConfirm": true,
+          "flag": "Vegan per the QR menu, Talabat says vegetarian. Confirm.",
+          "pick": "Named a great starter in the Khaleej Times review."
+        },
+        {
+          "id": "ketoprak",
+          "name": "Ketoprak",
+          "desc": "Rice cake tossed with beansprouts, fried tofu and vermicelli noodles served with homemade peanut sauce.",
+          "price": 45,
+          "photo": "ketoprak.webp",
+          "tags": [
+            "vegan"
+          ],
+          "priceSource": "talabat",
+          "toConfirm": true,
+          "flag": "Vegan per the QR menu, Talabat says vegetarian. Confirm."
+        }
+      ]
+    },
+    {
+      "id": "soups",
+      "name": "Soups",
+      "dishes": [
+        {
+          "id": "bakso-malang",
+          "name": "Bakso Malang",
+          "desc": "Meatball soup from the city of Malang, complete with noodles, tofu meatball, wonton and pangsit crackers.",
+          "price": 55,
+          "photo": "bakso-malang.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "bakso-sapi",
+          "name": "Bakso Sapi",
+          "desc": "Meatball soup served with vermicelli noodles, pokchoy, beansprout and condiments.",
+          "price": 55,
+          "photo": "bakso-sapi.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "mie-ayam-bakso-pangsit",
+          "name": "Mie Ayam Bakso Pangsit",
+          "desc": "Egg noodles topped with diced chicken, pokchoy, fried dumpling sheet, bakso meatball and soup on the side.",
+          "price": 50,
+          "photo": "mie-ayam-bakso-pangsit.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "sop-buntut",
+          "name": "Sop Buntut",
+          "desc": "Oxtail soup topped up with vegetables.",
+          "price": 55,
+          "photo": "sop-buntut.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "soto-betawi",
+          "name": "Soto Betawi",
+          "desc": "Coconut-based Betawi soup with diced beef and cabbage, served with rice.",
+          "price": 40,
+          "photo": null,
+          "tags": [],
+          "priceSource": "qr",
+          "toConfirm": true,
+          "flag": "Not on the Talabat export. Price from the QR dine-in menu, read 19 Nov 2026. Needs a photo. Description from the Khaleej Times (2024) and FoodKissed (2019) reviews, not from Betawi. Confirm.",
+          "pick": "FoodKissed (2019) wrote that the coconut broth is made for dunking rice into."
+        }
+      ]
+    },
+    {
+      "id": "noodles-rice",
+      "name": "Noodles and fried rice",
+      "dishes": [
+        {
+          "id": "bihun-goreng",
+          "name": "Bihun Goreng",
+          "desc": "Fried vermicelli noodles with vegetables (cabbage, carrot, pokchoy), served with cucumber, tomato and achar pickled.",
+          "price": 45,
+          "photo": "bihun-goreng.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "mie-goreng",
+          "name": "Mie Goreng",
+          "desc": "Fried egg noodles with vegetables (cabbage, carrot, pokchoy), served with cucumber, tomato and achar pickled.",
+          "price": 45,
+          "photo": "mie-goreng.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "nasi-goreng",
+          "name": "Nasi Goreng",
+          "desc": "Indonesian fried rice with fried egg on top, served with cucumber, tomato and achar pickle.",
+          "price": 45,
+          "photo": "nasi-goreng.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        }
+      ]
+    },
+    {
+      "id": "vegan",
+      "name": "Vegan",
+      "dishes": [],
+      "view": "filter:vegan"
+    },
+    {
+      "id": "sides",
+      "name": "Sides",
+      "dishes": [
+        {
+          "id": "cap-cai",
+          "name": "Cap Cai",
+          "desc": "Stir fried vegetables with carrot, cabbage, broccoli and long bean.",
+          "price": 38,
+          "photo": "cap-cai.webp",
+          "tags": [
+            "vegan"
+          ],
+          "priceSource": "talabat",
+          "toConfirm": true,
+          "flag": "Vegan per the QR menu, Talabat says vegetarian. Confirm.",
+          "pick": "The vegetable pick in the Khaleej Times review: light, fresh and full of flavour."
+        },
+        {
+          "id": "cah-kangkung",
+          "name": "Cah Kangkung",
+          "desc": "Stir fried morning glory leaves or water spinach.",
+          "price": 35,
+          "photo": "cah-kangkung.webp",
+          "tags": [
+            "vegan"
+          ],
+          "priceSource": "talabat",
+          "toConfirm": true,
+          "flag": "Vegan per the QR menu, Talabat says vegetarian. Confirm."
+        },
+        {
+          "id": "tahu-tempe-penyet",
+          "name": "Tahu Tempe Penyet",
+          "desc": "Fried tofu and tempe flattened and smashed with chilli all over.",
+          "price": 38,
+          "photo": "tahu-tempe-penyet.webp",
+          "tags": [
+            "vegan",
+            "spicy"
+          ],
+          "priceSource": "talabat",
+          "toConfirm": true,
+          "flag": "Vegan per the QR menu, Talabat says vegetarian. Confirm."
+        },
+        {
+          "id": "kerupuk-garlic-crackers",
+          "name": "Kerupuk (garlic crackers)",
+          "desc": "",
+          "price": 15,
+          "photo": "kerupuk-garlic-crackers.webp",
+          "tags": [
+            "vegan"
+          ],
+          "priceSource": "talabat",
+          "toConfirm": true,
+          "flag": "Vegan per the QR menu, Talabat says vegetarian. Confirm."
+        },
+        {
+          "id": "kerupuk-udang-prawn-crackers",
+          "name": "Kerupuk Udang (Prawn Crackers)",
+          "desc": "",
+          "price": 25,
+          "photo": "kerupuk-udang-prawn-crackers.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "kerupuk-putih",
+          "name": "Kerupuk Putih",
+          "desc": "Crackers made from tapioca starch, garlic, salt.",
+          "price": 15,
+          "photo": "kerupuk-putih.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "rempeyek-kacang",
+          "name": "Rempeyek Kacang",
+          "desc": "Cracker with peanut.",
+          "price": 18,
+          "photo": "rempeyek-kacang.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "kerupuk-kedelai",
+          "name": "Kerupuk Kedelai",
+          "desc": "Cracker made from a mixture of tapioca flour, wheat flour, and soybean-based ingredients.",
+          "price": 15,
+          "photo": "kerupuk-kedelai.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "extra-sambal",
+          "name": "Extra Sambal",
+          "desc": "",
+          "price": 5,
+          "photo": "extra-sambal.webp",
+          "tags": [
+            "spicy"
+          ],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "sambal-geprek",
+          "name": "Sambal Geprek",
+          "desc": "",
+          "price": 15,
+          "photo": "sambal-geprek.webp",
+          "tags": [
+            "spicy"
+          ],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "sambal-penyet",
+          "name": "Sambal Penyet",
+          "desc": "",
+          "price": 15,
+          "photo": "sambal-penyet.webp",
+          "tags": [
+            "spicy"
+          ],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "sambal-matah",
+          "name": "Sambal Matah",
+          "desc": "Spicy and aromatic raw shallots and chili relish.",
+          "price": 15,
+          "photo": "sambal-matah.webp",
+          "tags": [
+            "spicy"
+          ],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "ayam-penyet-only",
+          "name": "Ayam Penyet (only)",
+          "desc": "Smashed fried chicken with crushed chilli on top.",
+          "price": 30,
+          "photo": "ayam-penyet-only.webp",
+          "tags": [
+            "spicy"
+          ],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "jasmine-rice",
+          "name": "Jasmine Rice",
+          "desc": "",
+          "price": 7,
+          "photo": "jasmine-rice.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "rice-cake-lontong",
+          "name": "Rice Cake (Lontong)",
+          "desc": "",
+          "price": 7,
+          "photo": "rice-cake-lontong.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "tempe-orek",
+          "name": "Tempe Orek",
+          "desc": "Fried tempeh (fermented soybean cake) stir-fried in a sweet, savory, and slightly spicy sauce.",
+          "price": 20,
+          "photo": "tempe-orek.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "extra-achar",
+          "name": "Extra Achar",
+          "desc": "Indonesian style pickle.",
+          "price": 15,
+          "photo": "extra-achar.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "clear-soup",
+          "name": "Clear Soup",
+          "desc": "",
+          "price": null,
+          "priceNote": "Price on selection",
+          "photo": "clear-soup.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "sayur-nangka",
+          "name": "Sayur Nangka",
+          "desc": "Vegetables curry with jackfruit, tofu and long beans.",
+          "price": null,
+          "priceNote": "Price on selection",
+          "photo": "sayur-nangka.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "sayur-asam",
+          "name": "Sayur Asam",
+          "desc": "Sour soup.",
+          "price": null,
+          "priceNote": "Price on selection",
+          "photo": "sayur-asam.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "telor-ceplok-fried-egg",
+          "name": "Telor Ceplok (Fried Egg)",
+          "desc": "",
+          "price": 10,
+          "photo": "telor-ceplok-fried-egg.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "telor-dadar-omelette",
+          "name": "Telor Dadar (Omelette)",
+          "desc": "",
+          "price": 12,
+          "photo": "telor-dadar-omelette.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "emping",
+          "name": "Emping",
+          "desc": "Cracker made from melinjo nuts (Gnetum gnemon).",
+          "price": 15,
+          "photo": "emping.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "extra-kremes",
+          "name": "Extra Kremes",
+          "desc": "Crunch flakes.",
+          "price": 15,
+          "photo": "extra-kremes.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "pangsit-crackers",
+          "name": "Pangsit Crackers",
+          "desc": "Deep fried wonton wrappers.",
+          "price": 5,
+          "photo": "pangsit-crackers.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "urap",
+          "name": "Urap",
+          "desc": "Vegetables with grated coconut.",
+          "price": 15,
+          "photo": "urap.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        }
+      ]
+    },
+    {
+      "id": "desserts",
+      "name": "Desserts",
+      "dishes": [
+        {
+          "id": "kue-lapis-legit",
+          "name": "Kue Lapis Legit",
+          "desc": "Sweet layer cake made of flour, egg, sugar, butter, vanilla flavour and spekkoek spice.",
+          "price": null,
+          "priceNote": "Price on selection",
+          "photo": "kue-lapis-legit.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        }
+      ]
+    },
+    {
+      "id": "drinks",
+      "name": "Drinks",
+      "dishes": [
+        {
+          "id": "ice-tea-bottle-1-ltr",
+          "name": "Ice Tea Bottle (1 ltr)",
+          "desc": "",
+          "price": 28,
+          "photo": "ice-tea-bottle-1-ltr.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "ice-tea-glass",
+          "name": "Ice Tea Glass",
+          "desc": "",
+          "price": 12,
+          "photo": "ice-tea-glass.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "ice-campur",
+          "name": "Ice Campur",
+          "desc": "Mix of palm seed, jackfruit, avocado, pandan jelly, pearl sago, basil seed, cocopandan flavour syrup and milk.",
+          "price": 37,
+          "photo": "ice-campur.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true,
+          "pick": "The chef insisted the Khaleej Times reviewer try it, and the whole bowl was finished."
+        },
+        {
+          "id": "ice-teler",
+          "name": "Ice Teler",
+          "desc": "Iced coconut milk drink with avocado, jackfruit, coconut strips and pandan jelly.",
+          "price": 35,
+          "photo": "ice-teler.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "ice-bandung",
+          "name": "Ice Bandung",
+          "desc": "Ice milk with cocopandan flavour syrup.",
+          "price": 29,
+          "photo": "ice-bandung.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "ice-soda-gembira",
+          "name": "Ice Soda Gembira",
+          "desc": "Soda water with condensed milk and coco pandan flavour syrup.",
+          "price": 29,
+          "photo": "ice-soda-gembira.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "ice-teh-tarik",
+          "name": "Ice Teh Tarik",
+          "desc": "Homemade ice milk tea.",
+          "price": 20,
+          "photo": "ice-teh-tarik.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "melon-mojito",
+          "name": "Melon Mojito",
+          "desc": "Indonesian mocktail drink with melon syrup flavour.",
+          "price": 29,
+          "photo": "melon-mojito.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "lemon-mint-juice",
+          "name": "Lemon Mint Juice",
+          "desc": "",
+          "price": 29,
+          "photo": "lemon-mint-juice.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "lemonade",
+          "name": "Lemonade",
+          "desc": "",
+          "price": 29,
+          "photo": "lemonade.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "fresh-orange-juice",
+          "name": "Fresh Orange Juice",
+          "desc": "Freshly squeezed orange juice.",
+          "price": 29,
+          "photo": "fresh-orange-juice.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "avocado-fresh-juice",
+          "name": "Avocado Fresh Juice",
+          "desc": "Fresh avocado juice with milk and honey.",
+          "price": 32,
+          "photo": "avocado-fresh-juice.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "coconut-milk",
+          "name": "Coconut Milk",
+          "desc": "Coconut milk with coconut strips.",
+          "price": 18,
+          "photo": "coconut-milk.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "es-kopi",
+          "name": "Es Kopi",
+          "desc": "Ice coffee latte with palm sugar.",
+          "price": 28,
+          "photo": "es-kopi.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "teh-pucuk",
+          "name": "Teh Pucuk",
+          "desc": "Indonesian jasmine tea.",
+          "price": 15,
+          "photo": "teh-pucuk.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "water",
+          "name": "Water",
+          "desc": "",
+          "price": 5,
+          "photo": "water.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "water-large",
+          "name": "Water Large",
+          "desc": "",
+          "price": 10,
+          "photo": "water-large.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "perrier",
+          "name": "Perrier",
+          "desc": "Sparkling water.",
+          "price": null,
+          "priceNote": "Price on selection",
+          "photo": "perrier.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "coke",
+          "name": "Coke",
+          "desc": "",
+          "price": 12,
+          "photo": "coke.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "diet-coke",
+          "name": "Diet Coke",
+          "desc": "",
+          "price": 12,
+          "photo": "diet-coke.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "coke-zero",
+          "name": "Coke Zero",
+          "desc": "",
+          "price": 12,
+          "photo": "coke-zero.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "soda-water",
+          "name": "Soda water",
+          "desc": "",
+          "price": 8,
+          "photo": "soda-water.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "sprite",
+          "name": "Sprite",
+          "desc": "",
+          "price": 12,
+          "photo": "sprite.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "sprite-zero",
+          "name": "Sprite Zero",
+          "desc": "",
+          "price": 12,
+          "photo": "sprite-zero.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "fanta-strawberry",
+          "name": "Fanta Strawberry",
+          "desc": "",
+          "price": 12,
+          "photo": "fanta-strawberry.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        },
+        {
+          "id": "fanta-orange",
+          "name": "Fanta Orange",
+          "desc": "",
+          "price": 12,
+          "photo": "fanta-orange.webp",
+          "tags": [],
+          "priceSource": "talabat",
+          "toConfirm": true
+        }
+      ]
+    }
+  ]
+}

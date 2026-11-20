@@ -1,0 +1,12 @@
+# dependencies and build output
+node_modules/
+dist/
+.astro/
+
+# local files
+*.log
+.DS_Store
+
+# local secrets for testing the booking function (never commit)
+.dev.vars
+.wrangler/

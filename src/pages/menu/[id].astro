@@ -1,0 +1,119 @@
+---
+// One page per dish: /menu/<id>/. Big photo (when a real one exists), name, price, tags, what the
+// dish is, why a reviewer picked it (when one did), a Book button, then "Goes well with" and
+// "More from <section>". No cart, no add button.
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import DishRow from '../../components/DishRow.astro';
+import { allDishes, categories, dishPhoto, aed, pricesConfirmed } from '../../lib/menu';
+import { pairsFor, moreFrom } from '../../lib/pairs';
+import type { Dish } from '../../lib/menu';
+
+export function getStaticPaths() {
+  return allDishes.map((dish) => ({ params: { id: dish.id }, props: { dish } }));
+}
+const { dish } = Astro.props as { dish: Dish };
+const photo = dishPhoto(dish.photo);
+const home = categories.find((c) => c.dishes.some((d) => d.id === dish.id))!;
+const pairs = pairsFor(dish);
+const more = moreFrom(dish);
+const vegan = dish.tags.includes('vegan');
+const spicy = dish.tags.includes('spicy');
+const description = dish.desc ? `${dish.name}, ${aed(dish.price) || 'price to confirm'}. ${dish.desc}` : `${dish.name} at Betawi, JLT.`;
+---
+
+<Base title={dish.name} description={description} bar="back">
+  <article class="dish">
+    <div class="top on-dark">
+    <div class="wrap">
+    <p class="back"><a class="textlink" href={`/menu/#${home.id}`}>Back to the menu</a></p>
+    <div class="grid">
+      {photo && (
+        <Image
+          class="photo"
+          src={photo}
+          alt={dish.name}
+          width={400}
+          height={400}
+          widths={[300, 400]}
+          sizes="(min-width: 1000px) 400px, (min-width: 600px) 300px, calc(100vw - 40px)"
+          loading="eager"
+          fetchpriority="high"
+          style={`view-transition-name: dish-${dish.id}`}
+        />
+      )}
+      <div class="info">
+        <h1 class="display">{dish.name}</h1>
+        <p class={dish.price === null ? 'price big none' : 'price big'}>{dish.price === null ? 'Price to confirm' : aed(dish.price)}</p>
+        {(spicy || vegan || dish.pick) && (
+          <p class="tags">
+            {spicy && <span class="tag spicy">Spicy</span>}
+            {vegan && <span class="tag vegan">Vegan</span>}
+          </p>
+        )}
+        {dish.desc && <p class="desc">{dish.desc}</p>}
+        {dish.pick && <p class="pick"><b>Review pick.</b> {dish.pick}</p>}
+        {!pricesConfirmed && dish.price !== null && <p class="note muted">Preview price, to be confirmed.</p>}
+        <a class="btn btn-paper" href="#book" data-book>Book a table</a>
+      </div>
+    </div>
+    </div>
+    </div>
+
+    {pairs.length > 0 && (
+      <section class="recs" aria-labelledby="pairs-title">
+        <h2 id="pairs-title" class="headline"><span class="mk"><span>Goes well with</span></span></h2>
+        <ul class="rows" role="list">
+          {pairs.map((d) => <DishRow dish={d} transition={false} />)}
+        </ul>
+      </section>
+    )}
+
+    {more && more.dishes.length > 0 && (
+      <section class="recs" aria-labelledby="more-title">
+        <h2 id="more-title" class="headline"><span class="mk"><span>More from {more.title.toLowerCase()}</span></span></h2>
+        <ul class="rows" role="list">
+          {more.dishes.filter((d) => !pairs.some((p) => p.id === d.id)).map((d) => <DishRow dish={d} transition={false} />)}
+        </ul>
+        <p class="all"><a class="textlink" href="/menu/">See the full menu</a></p>
+      </section>
+    )}
+  </article>
+</Base>
+
+<style>
+  .dish { padding-bottom: 24px; }
+  .top { position: relative; overflow-x: clip; background: var(--clay); color: var(--sand); padding: 8px 0 56px; margin-bottom: 24px; }
+  .top::after { content: ''; position: absolute; left: -20px; right: -20px; bottom: -9px; height: 10px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='10'%3E%3Cpath d='M0 0H20L10 10Z' fill='%238C4F21'/%3E%3C/svg%3E") repeat-x 0 0 / 20px 10px; }
+  .wrap { max-width: 1200px; margin-inline: auto; }
+  .top .textlink { color: var(--sand); text-decoration-color: color-mix(in srgb, var(--sand) 60%, transparent); }
+  .back { padding: 4px var(--gutter) 8px; }
+  .photo { display: block; width: calc(100% - 2 * var(--gutter)); max-width: 400px; aspect-ratio: 1; height: auto; object-fit: cover; margin-inline: var(--gutter); }
+  .info { padding: 24px var(--gutter) 0; display: grid; gap: 12px; justify-items: start; }
+  .display { font-size: clamp(2.25rem, 1.5rem + 3.6vw, 3.75rem); }
+  .big { font-size: 1.5rem; color: var(--paper); }
+  .big.none { color: var(--sand); font-size: 1.125rem; font-weight: 600; }
+  .tags { display: flex; gap: 14px; }
+  .tag { font: 600 0.875rem/1.5 var(--font-sans); color: var(--sand); }
+  .desc { font-size: 1.125rem; max-width: 52ch; }
+  .pick { max-width: 52ch; }
+  .pick b { font-weight: 700; }
+  .note { font-size: 0.875rem; }
+  .info .btn { margin-top: 10px; padding-inline: 40px; }
+  .recs { max-width: 1200px; margin: 72px auto 0; }
+  .recs .headline { padding-inline: var(--gutter); margin-bottom: 14px; }
+  .rows { margin: 0; padding: 0; }
+  .all { padding: 8px var(--gutter) 0; }
+  @media (min-width: 600px) {
+    .back { padding-inline: 48px; }
+    .grid { display: grid; grid-template-columns: 300px 1fr; gap: 40px; padding: 16px 48px 0; align-items: center; }
+    .photo { width: 300px; margin: 0; }
+    .info { padding: 0; align-content: center; }
+    .recs .headline, .all { padding-inline: 48px; }
+    .rows { display: grid; grid-template-columns: 1fr 1fr; column-gap: 32px; margin-inline: 28px; align-items: start; }
+  }
+  @media (min-width: 1000px) {
+    .grid { grid-template-columns: 400px 1fr; gap: 64px; }
+    .photo { width: 400px; }
+  }
+</style>

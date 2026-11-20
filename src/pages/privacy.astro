@@ -1,0 +1,23 @@
+---
+// The privacy policy page. The words are in src/legal/privacy.md (plain markdown, easy to edit).
+import Base from '../layouts/Base.astro';
+import { Content, frontmatter } from '../legal/privacy.md';
+---
+
+<Base title="Privacy">
+  <article class="doc">
+    <h1>{frontmatter.title}</h1>
+    <p class="updated">Last updated {frontmatter.updated}</p>
+    <div class="prose"><Content /></div>
+  </article>
+</Base>
+
+<style>
+  .doc { max-width: 760px; margin-inline: auto; padding: 48px var(--gutter) 96px; }
+  h1 { font: 600 clamp(2.125rem, 1.4rem + 3.4vw, 3.5rem) / 1.08 var(--font-display); }
+  .updated { color: var(--muted); margin-top: 8px; }
+  .prose { margin-top: 32px; }
+  .prose :global(h2) { font: 600 1.5rem/1.2 var(--font-display); margin: 32px 0 8px; }
+  .prose :global(p) { margin-top: 12px; max-width: 65ch; }
+  .prose :global(a) { color: var(--green); text-underline-offset: 3px; }
+</style>

@@ -1,0 +1,22 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Page not found">
+  <section class="nf">
+    <h1>We can't find that page.</h1>
+    <p>Try the menu, or go back to the home page.</p>
+    <div class="acts">
+      <a class="btn btn-primary" href="/menu/">See the menu</a>
+      <a class="btn" href="/">Home</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf { max-width: 560px; margin-inline: auto; padding: 96px var(--gutter); }
+  h1 { font: 600 clamp(2.125rem, 1.4rem + 3.4vw, 3.5rem) / 1.08 var(--font-display); }
+  p { margin-top: 12px; color: var(--muted); }
+  .acts { display: grid; gap: 12px; margin-top: 24px; }
+  @media (min-width: 640px) { .acts { grid-template-columns: repeat(2, max-content); } }
+</style>
