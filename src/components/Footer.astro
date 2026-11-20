@@ -2,47 +2,45 @@
 // Footer: a sign-off, where and when, the places to find Betawi, and a plain note that this is a demo.
 import Icon from './Icon.astro';
 import restaurant from '../content/restaurant.json';
-const { instagram, delivery, address, hours, phone, phoneDisplay } = restaurant;
+const { instagram, delivery, tableOrder } = restaurant;
 ---
 
 <footer class="foot on-dark">
   <div class="inner">
-    <p class="sign">See you by the lake.</p>
-
-    <div class="cols">
-      <div class="col">
-        <h2 class="lab">Find us</h2>
-        <p>{address.oneLine}</p>
-        <p>{hours.display}</p>
-        <a class="line" href={`tel:${phone}`}><Icon name="phone" size={18} />{phoneDisplay}</a>
-      </div>
-      <div class="col">
-        <h2 class="lab">Follow and order</h2>
-        <a class="line" href={instagram.url} rel="noopener"><Icon name="instagram" size={18} />{instagram.handle}</a>
-        {delivery.map((d) => <a class="line" href={d.url} rel="noopener">Order delivery on {d.name}</a>)}
-        <a class="line" href="/privacy/">Privacy</a>
-      </div>
+    <div class="top">
+      <p class="sign">See you by the lake.</p>
+      <a class="btn btn-paper" href="#book" data-book>Book a table <Icon name="arrow-right" size={18} /></a>
     </div>
-
-    <p class="demo">Demo preview made by studio#2. The photos and the first-screen clip are placeholders.</p>
+    <div class="bottom">
+      <nav class="nav" aria-label="Footer">
+        <a class="line" href="/menu/">Full menu</a>
+        {tableOrder && <a class="line" href={tableOrder.url} target="_blank" rel="noopener">{tableOrder.label}</a>}
+        {delivery.map((d) => <a class="line" href={d.url} rel="noopener">Order delivery on {d.name}</a>)}
+        <a class="line" href={instagram.url} rel="noopener"><Icon name="instagram" size={18} />{instagram.handle}</a>
+        <a class="line" href="/privacy/">Privacy</a>
+      </nav>
+      <p class="demo">Demo preview made by studio#2. The photos and the first-screen clip are placeholders.</p>
+    </div>
   </div>
 </footer>
 
 <style>
-  .foot { position: relative; background: var(--deep); color: var(--sand); padding: 56px var(--gutter) 40px; margin-top: 64px; }
+  .foot { position: relative; background: var(--deep); color: var(--light); padding: 56px var(--gutter) 40px; margin-top: 64px; }
   .foot::before { content: ''; position: absolute; left: 0; right: 0; top: -13px; height: 14px; background: var(--gb-up-deep) repeat-x 0 100% / 24px 14px; }
   .inner { max-width: 1104px; margin-inline: auto; display: grid; gap: 32px; justify-items: start; }
   .sign { font: 500 clamp(2rem, 1.3rem + 3vw, 3.25rem)/1.12 var(--font-display); }
-  .cols { display: grid; gap: 32px; width: 100%; }
-  .col { display: grid; gap: 4px; justify-items: start; align-content: start; }
-  .lab { font: 500 1.25rem/1.2 var(--font-display); margin-bottom: 6px; }
-  .col p { font-size: 1rem; }
-  .line { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; color: var(--sand); font-size: 1rem; font-weight: 500; text-decoration: none; }
+  .top { display: grid; gap: 20px; justify-items: start; width: 100%; }
+  .top .btn { padding-inline: 32px; }
+  .bottom { display: grid; gap: 20px; width: 100%; padding-top: 20px; border-top: 1px solid color-mix(in srgb, var(--light) 28%, transparent); }
+  .nav { display: flex; flex-wrap: wrap; gap: 0 24px; }
+  .line { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; color: var(--light); font-size: 1rem; font-weight: 500; text-decoration: none; }
   .line:hover, .line:focus-visible { text-decoration: underline; text-underline-offset: 4px; }
-  .demo { width: 100%; padding-top: 20px; border-top: 1px solid color-mix(in srgb, var(--sand) 28%, transparent); font-size: 0.9375rem; line-height: 1.45; max-width: none; }
+  .demo { width: auto; max-width: 44ch; font-size: 0.9375rem; line-height: 1.45; }
   @media (max-width: 719px) { .foot { padding-bottom: calc(104px + env(safe-area-inset-bottom)); } }
   @media (min-width: 720px) {
     .foot { padding: 80px 48px 48px; }
-    .cols { grid-template-columns: 1fr 1fr; gap: 64px; max-width: 760px; }
+    .top { grid-template-columns: 1fr auto; align-items: end; justify-items: stretch; }
+    .top .btn { justify-self: end; }
+    .bottom { grid-template-columns: 1fr auto; align-items: center; gap: 16px 40px; }
   }
 </style>

@@ -59,6 +59,15 @@ const pageTitle = title ? `${title} | ${restaurant.shortName}` : `${restaurant.n
     <!-- Preview: never listed. Also set in public/_headers and public/robots.txt. -->
     <meta name="robots" content="noindex, nofollow" />
     <meta name="theme-color" content="#EFE4CC" />
+    <!-- Night mode: set before first paint from the saved choice, else the device setting. -->
+    <script is:inline>
+      (function () {
+        var night = false;
+        try { var s = localStorage.getItem('betawi-theme'); night = s ? s === 'night' : matchMedia('(prefers-color-scheme: dark)').matches; }
+        catch (e) { night = matchMedia('(prefers-color-scheme: dark)').matches; }
+        if (night) document.documentElement.setAttribute('data-theme', 'night');
+      })();
+    </script>
     <link rel="preload" href={displayFile} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={bodyFile} as="font" type="font/woff2" crossorigin />
     {Astro.url.pathname === "/" && <link rel="preload" as="image" href="/media/hero-poster.webp" fetchpriority="high" />}

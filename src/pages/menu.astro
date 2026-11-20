@@ -53,7 +53,7 @@ const lists: Category[] = categories.filter((c) => c.dishes.length > 0);
 </Base>
 
 <style>
-  .head { position: relative; overflow-x: clip; background: var(--clay); color: var(--sand); padding: 40px 0 44px; margin-bottom: 14px; }
+  .head { position: relative; overflow-x: clip; background: var(--clay-solid); color: var(--light); padding: 40px 0 44px; margin-bottom: 14px; }
   .head::after { content: ''; position: absolute; left: -24px; right: -24px; bottom: -13px; height: 14px; background: var(--gb-down-clay) repeat-x 0 0 / 24px 14px; }
   .headin { max-width: 1200px; margin-inline: auto; padding-inline: var(--gutter); }
   h1 { font: 600 clamp(2.5rem, 1.6rem + 4.4vw, 4.5rem) / 1.04 var(--font-display); letter-spacing: -0.015em; }
@@ -64,7 +64,7 @@ const lists: Category[] = categories.filter((c) => c.dishes.length > 0);
   .chips ul::-webkit-scrollbar { display: none; }
   .chip { flex: none; white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 48px; padding: 0; border: 0; border-bottom: 3px solid transparent; background: none; color: var(--ink); text-decoration: none; font: 600 1rem/1.2 var(--font-sans); cursor: pointer; margin-bottom: -1px; }
   .chip[aria-current='true'], .chip[aria-pressed='true'] { border-bottom-color: var(--plank); font-weight: 700; }
-  .chip[aria-pressed='true'] { color: var(--green); }
+  .chip[aria-pressed='true'] { color: var(--green-text); }
   .vegan-note { max-width: 1200px; margin: 16px auto 0; padding-inline: var(--gutter); color: var(--muted); }
   .sections { max-width: 1200px; margin-inline: auto; padding-bottom: 96px; }
   .section { padding-top: 40px; scroll-margin-top: calc(var(--header-h) + 72px); }

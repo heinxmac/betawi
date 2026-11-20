@@ -1,12 +1,10 @@
-# Betawi
+# Betawi preview
 
-Website for Betawi Restaurant, Lake Terrace Tower, JLT, Dubai. Designed and built by heinx.
+Private preview for Betawi Restaurant, JLT. Unsigned lead: show it only to Betawi. Preview stays noindex (meta tag, `public/_headers`, `public/robots.txt`).
 
-It is a demo preview: it stays `noindex` (meta tag, `public/_headers`, `public/robots.txt`).
-
-- Stack: Astro, deployed on Cloudflare Pages from this repository. Set `NODE_VERSION=22` in the Cloudflare build settings. Build command `npm run build`, output folder `dist`.
-- Pages: `/` home, `/menu/`, one page per dish, `/privacy/`, 404.
-- Content: menu in `src/content/menu.json`, venue facts and story in `src/content/restaurant.json`.
-- Booking: the sheet posts a table request to `/api/book` (`functions/api/book.js`). It saves to a Google Sheet and Calendar (`google-sheet/Code.gs`), Notion and Telegram, whichever have keys. Without keys the sheet shows "Booking opens soon" and nothing is sent. Setup steps: `BOOKING-SETUP.md`.
-- Keys go in the Cloudflare dashboard (Secrets) and the git-ignored `.dev.vars` (template `.dev.vars.example`). Never in code or git.
-- Local: `npm install`, `npm run dev`. Test the booking function locally with `npm run preview:requests`, then open http://127.0.0.1:8788.
+- Base: Burma Road v5 (Astro, Cloudflare Pages, deploy by git push only). Booking engine copied from Bandung (heinx, 20 Nov 2026). `NODE_VERSION=22` in Cloudflare build settings.
+- Pages: `/` home, `/menu`, `/privacy`, 404.
+- Design lock: `design/DESIGN.md`. Menu data: `src/content/menu.json` (Talabat prices, all still to confirm). Venue facts: `src/content/restaurant.json` (hours and WhatsApp number still open).
+- Booking: the sheet posts a table request to `/api/book` (`functions/api/book.js`). It saves to Google Sheet and Calendar (`google-sheet/Code.gs`), Notion and Telegram, whichever have keys. Until heinx adds the keys, the server answers 502 and the sheet shows "Booking opens soon". Nothing is sent.
+- Keys: Cloudflare dashboard (Secrets) and the git-ignored `.dev.vars` (template `.dev.vars.example`). heinx enters them. Never in code or git.
+- Build: `npm run build`. Test booking locally with the function: `npm run preview:requests`, then open http://127.0.0.1:8788 (and http://127.0.0.1:8788/api/book to see which keys are set).

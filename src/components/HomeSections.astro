@@ -42,6 +42,7 @@ const gallery = [
   d('ketoprak'),
   d('ayam-kremes'),
   t('t1_lake_water', 'The lake in front of the terrace'),
+  t('t6_storefront_sign', 'The Betawi storefront with the green sign'),
   d('ice-campur'),
   d('iga-penyet'),
   d('mie-goreng'),
@@ -166,23 +167,6 @@ const gallery = [
   </div>
 </section>
 
-<section id="find-us" class="find" aria-labelledby="find-title">
-  <div class="pad info">
-    <h2 id="find-title" class="headline"><span class="mk"><span>Find us</span></span></h2>
-    <p class="addr">{address.oneLine}</p>
-    <p class="muted">{address.landmark}</p>
-    <p class="muted">{hours.display}</p>
-    <div class="actions">
-      <a class="btn btn-primary" href="#book" data-book>Book a table</a>
-      <a class="btn" href={mapsUrl} target="_blank" rel="noopener"><Icon name="pin" size={18} />Directions</a>
-      <a class="btn" href={`tel:${phone}`} aria-label={`Call ${phoneDisplay}`}><Icon name="phone" size={18} />Call us</a>
-      {whatsapp && <a class="btn" href={`https://wa.me/${whatsapp}`} rel="noopener"><Icon name="whatsapp" size={18} />WhatsApp</a>}
-    </div>
-    {tableOrder && <p class="orderline"><a class="textlink" href={tableOrder.url} target="_blank" rel="noopener">{tableOrder.label}</a></p>}
-  </div>
-  <div class="shot"><Image class="wide" src={terracePhoto('t6_storefront_sign')} alt="Betawi storefront with the green sign" widths={[390, 560, 720]} sizes="(min-width: 768px) 50vw, 100vw" loading="lazy" /></div>
-</section>
-
 <style>
   .pad { padding-inline: var(--gutter); }
   section { position: relative; margin-top: 104px; }
@@ -191,8 +175,8 @@ const gallery = [
 
   /* Bands: the colour layer sits behind and fades in as the band arrives. */
   .bandbg { position: absolute; inset: 0; z-index: -1; }
-  .story, .index { isolation: isolate; z-index: 1; color: var(--sand); overflow-x: clip; }
-  .index .bandbg { background: var(--clay); }
+  .story, .index { isolation: isolate; z-index: 1; color: var(--light); overflow-x: clip; }
+  .index .bandbg { background: var(--clay-solid); }
   .story .bandbg { background: var(--green); }
   /* gigi balang: the tooth edge of Betawi house trim, one row on the top of each band */
   .bandbg::before, .bandbg::after { content: ''; position: absolute; left: -24px; right: -24px; height: 14px; background-repeat: repeat-x; background-size: 24px 14px; }
@@ -208,7 +192,7 @@ const gallery = [
   .dishrows li:first-child { border-top: var(--rule); }
   .dishrows li { position: relative; }
   .dishrows li::after, .rows li::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: color-mix(in srgb, var(--clay) 40%, transparent); transform-origin: 0 50%; }
-  .rows li::after { background: color-mix(in srgb, var(--sand) 40%, transparent); }
+  .rows li::after { background: color-mix(in srgb, var(--light) 40%, transparent); }
   .dishrows a { display: grid; grid-template-columns: 128px 1fr; gap: 18px; align-items: center; padding-block: 16px; text-decoration: none; color: inherit; }
   .ph { width: 128px; height: 128px; overflow: clip; }
   .ph :global(img) { width: 128px; height: 128px; object-fit: cover; }
@@ -226,7 +210,7 @@ const gallery = [
   .paras { display: grid; gap: 16px; max-width: 46ch; font-size: 1.125rem; line-height: 1.6; }
   .steps { display: grid; gap: 28px; max-width: 46ch; list-style: none; margin: 0; padding: 0; }
   .step { position: relative; padding-left: 22px; }
-  .step::before { content: ''; position: absolute; left: 0; top: 6px; bottom: 0; width: 1px; background: color-mix(in srgb, var(--sand) 55%, transparent); transform-origin: 50% 0; }
+  .step::before { content: ''; position: absolute; left: 0; top: 6px; bottom: 0; width: 1px; background: color-mix(in srgb, var(--light) 55%, transparent); transform-origin: 50% 0; }
   .when { display: block; font: 500 clamp(2rem, 1.4rem + 2.6vw, 3rem)/1.1 var(--font-display); }
   .step p { margin-top: 6px; font-size: 1.0625rem; line-height: 1.55; }
   .quote { position: relative; padding-top: 20px; }
@@ -236,7 +220,7 @@ const gallery = [
   .press { display: grid; gap: 12px; }
   .press h3 { font: 600 1.25rem/1.2 var(--font-display); }
   .press ul { display: grid; gap: 14px; }
-  .press a { color: var(--sand); text-underline-offset: 4px; display: inline-flex; flex-wrap: wrap; gap: 4px 10px; min-height: 44px; align-items: center; }
+  .press a { color: var(--light); text-underline-offset: 4px; display: inline-flex; flex-wrap: wrap; gap: 4px 10px; min-height: 44px; align-items: center; }
   .press a span { font-size: 0.875rem; opacity: 0.9; }
   .press p { max-width: 40ch; }
   .press .short { font-style: normal; font-weight: 600; }
@@ -251,9 +235,9 @@ const gallery = [
 
   .index { padding: 104px 0 72px; }
   .index .head { margin-bottom: 20px; }
-  .rows { border-top: 1px solid color-mix(in srgb, var(--sand) 40%, transparent); }
+  .rows { border-top: 1px solid color-mix(in srgb, var(--light) 40%, transparent); }
   .rows li { position: relative; }
-  .rows a { display: grid; grid-template-columns: 56px 1fr; grid-template-areas: 't n' 't m'; column-gap: 16px; align-items: center; padding: 12px var(--gutter); text-decoration: none; color: var(--sand); min-height: 80px; }
+  .rows a { display: grid; grid-template-columns: 56px 1fr; grid-template-areas: 't n' 't m'; column-gap: 16px; align-items: center; padding: 12px var(--gutter); text-decoration: none; color: var(--light); min-height: 80px; }
   .rows a:not([data-photo]) { grid-template-columns: 1fr; grid-template-areas: 'n' 'm'; }
   .rows .t { grid-area: t; display: block; width: 56px; height: 56px; object-fit: cover; }
   .rows .n { grid-area: n; }
@@ -273,13 +257,6 @@ const gallery = [
   .galmore .btn { flex: 1 1 200px; }
 
 
-  .find { margin-top: 0; padding-top: 72px; margin-bottom: 0; }
-  .info { padding-bottom: 28px; max-width: 1200px; margin-inline: auto; }
-  .addr { margin-top: 12px; font-size: 1.125rem; }
-  .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
-  .actions .btn:first-child, .actions .btn:last-child:nth-child(even) { grid-column: 1 / -1; }
-  .orderline { margin-top: 8px; }
-  .find .wide { aspect-ratio: 4 / 3; height: auto; object-position: 50% 40%; }
 
   @media (min-width: 768px) {
     .pad { padding-inline: 48px; }
@@ -314,12 +291,6 @@ const gallery = [
     .grid { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); max-width: 1200px; margin-inline: auto; padding-inline: 48px; gap: 12px; }
     .galmore { max-width: 1200px; margin-inline: auto; }
     .galmore .btn { flex: 0 0 auto; padding-inline: 40px; }
-    .find { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; max-width: 1200px; margin-inline: auto; padding-inline: 48px; padding-top: 112px; }
-    .find .pad { padding-inline: 0; }
-    .find .info { margin-inline: 0; }
-    .find .wide { aspect-ratio: 4 / 5; }
-    .find .shot { width: 100%; max-width: 520px; justify-self: end; }
-    .actions { grid-template-columns: 1fr 1fr; }
   }
   @media (min-width: 1000px) {
     .lake { display: grid; grid-template-columns: minmax(0, 1fr) 520px; align-items: end; column-gap: 48px; }
@@ -344,17 +315,17 @@ const gallery = [
     .fimg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.5s var(--ease); }
     .fimg.cur { opacity: 1; }
   }
-  .reserve { background: var(--deep); color: var(--sand); margin-top: 0; padding: 88px 0; }
+  .reserve { background: var(--deep); color: var(--light); margin-top: 0; padding: 88px 0; }
   .reserve-in { display: grid; gap: 22px; justify-items: start; max-width: 1200px; margin-inline: auto; }
   .reserve .headline { font-size: clamp(2.25rem, 1.5rem + 3.4vw, 3.75rem); }
   .rline { font-size: 1.125rem; max-width: 36ch; }
-  .rfacts { display: grid; grid-template-columns: repeat(3, auto); gap: 0 28px; justify-content: start; padding-top: 18px; border-top: 1px solid color-mix(in srgb, var(--sand) 35%, transparent); width: 100%; max-width: 560px; }
+  .rfacts { display: grid; grid-template-columns: repeat(3, auto); gap: 0 28px; justify-content: start; padding-top: 18px; border-top: 1px solid color-mix(in srgb, var(--light) 35%, transparent); width: 100%; max-width: 560px; }
   .rfacts li { display: grid; gap: 4px; }
   .rfacts span { font-size: 0.9375rem; }
   .rfacts b { font: 500 clamp(1.25rem, 1rem + 1.2vw, 1.75rem)/1.15 var(--font-display); }
   .reserve .btn { min-width: 220px; margin-top: 6px; }
   .rgroup { max-width: 44ch; font-size: 1rem; }
-  .rgroup .textlink { color: var(--sand); text-decoration-color: color-mix(in srgb, var(--sand) 60%, transparent); }
+  .rgroup .textlink { color: var(--light); text-decoration-color: color-mix(in srgb, var(--light) 60%, transparent); }
   @media (min-width: 768px) { .reserve { padding: 128px 0; } .reserve-in { padding-inline: 48px; } }
 </style>
 

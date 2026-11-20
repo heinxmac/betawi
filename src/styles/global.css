@@ -24,6 +24,19 @@
   --ink: #2A1A10;
   --muted: #5E4A39;
   /* Older names, mapped so the menu, dish pages and booking sheet follow the new palette. */
+  /* Fixed colours for text on coloured or dark bands, so the same band reads the same in both modes. */
+  --light: #EFE4CC;
+  --light-paper: #F8F1E2;
+  --dark-ink: #2A1A10;
+  --clay-solid: #8C4F21;
+  --green-text: #1B4A3F;
+  /* Map of Cluster D */
+  --map-bg: #E5D7B8;
+  --map-block: #D6C49E;
+  --map-road: #F7EFE0;
+  --map-water: #1B4A3F;
+  --map-water-edge: #2C6B5C;
+  --map-plot: #C8A971;
   --plank: var(--clay);
   --sambal: var(--clay);
 
@@ -36,6 +49,32 @@
   --rule: 1px solid color-mix(in srgb, var(--clay) 40%, transparent);
   --ease: cubic-bezier(0.25, 1, 0.5, 1);
   --ease-lux: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* Night ("lake at night"): the same tokens, darker. Set on <html data-theme="night"> by the small script in
+   the head (saved choice, else the device setting). Clay as text is lifted to #D68A4C so it stays above 4.5:1
+   on the night page and sheet; bands keep --clay-solid with light text. Colour changes are instant. */
+:root[data-theme='night'] {
+  color-scheme: dark;
+  --sand: #14221D;
+  --paper: #1B2D26;
+  --green: #0F2922;
+  --deep: #0A1C17;
+  --clay: #D68A4C;
+  --turmeric: #E8AE38;
+  --ink: #F5EBD6;
+  --muted: #B8AA93;
+  --green-text: #8CCBB0;
+  --map-bg: #182923;
+  --map-block: #21372F;
+  --map-road: #111E19;
+  --map-water: #0B1D17;
+  --map-water-edge: #387A68;
+  --map-plot: #7A5A33;
+  --gb-up-green: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='14'%3E%3Cpath fill='%230F2922' fill-rule='evenodd' d='M0 14 12 0l12 14ZM12 7.1a2.3 2.3 0 1 0 0 4.6 2.3 2.3 0 1 0 0-4.6Z'/%3E%3C/svg%3E");
+  --gb-up-deep: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='14'%3E%3Cpath fill='%230A1C17' fill-rule='evenodd' d='M0 14 12 0l12 14ZM12 7.1a2.3 2.3 0 1 0 0 4.6 2.3 2.3 0 1 0 0-4.6Z'/%3E%3C/svg%3E");
+  --gb-up-sand: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='14'%3E%3Cpath fill='%2314221D' fill-rule='evenodd' d='M0 14 12 0l12 14ZM12 7.1a2.3 2.3 0 1 0 0 4.6 2.3 2.3 0 1 0 0-4.6Z'/%3E%3C/svg%3E");
+  --gb-down-green: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='14'%3E%3Cpath fill='%230F2922' fill-rule='evenodd' d='M0 0h24L12 14ZM12 2.3a2.3 2.3 0 1 0 0 4.6 2.3 2.3 0 1 0 0-4.6Z'/%3E%3C/svg%3E");
 }
 
 *,
@@ -63,14 +102,14 @@ ul { padding: 0; list-style: none; }
 img, video { display: block; max-width: 100%; height: auto; }
 a { color: inherit; }
 [hidden] { display: none !important; }
-::selection { background: var(--clay); color: var(--paper); }
+::selection { background: var(--clay-solid); color: var(--light-paper); }
 html { scrollbar-width: thin; scrollbar-color: var(--clay) var(--sand); accent-color: var(--clay); caret-color: var(--clay); }
 
 :focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
 .on-green :focus-visible, .on-dark :focus-visible { outline-color: var(--turmeric); }
-.index :focus-visible { outline-color: var(--paper); }
+.index :focus-visible { outline-color: var(--light-paper); }
 
-.skip-link { position: absolute; left: var(--gutter); top: -100px; z-index: 100; background: var(--green); color: var(--sand); padding: 12px 16px; border-radius: var(--radius); }
+.skip-link { position: absolute; left: var(--gutter); top: -100px; z-index: 100; background: var(--green); color: var(--light); padding: 12px 16px; border-radius: var(--radius); }
 .skip-link:focus { top: 8px; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
@@ -99,13 +138,13 @@ html { scrollbar-width: thin; scrollbar-color: var(--clay) var(--sand); accent-c
 }
 .btn:active { transform: scale(0.98); }
 @media (hover: hover) { .btn:hover { background: var(--ink); color: var(--sand); } }
-.btn-primary { background: var(--clay); border-color: var(--clay); color: var(--paper); }
+.btn-primary { background: var(--clay-solid); border-color: var(--clay-solid); color: var(--light-paper); }
 @media (hover: hover) { .btn-primary:hover { background: var(--ink); border-color: var(--ink); } }
-.btn-paper { background: var(--paper); border-color: var(--paper); color: var(--ink); }
-@media (hover: hover) { .btn-paper:hover { background: var(--sand); border-color: var(--sand); color: var(--ink); } }
-.on-dark .btn { border-color: var(--sand); color: var(--sand); }
-@media (hover: hover) { .on-dark .btn:hover { background: var(--sand); color: var(--ink); } }
-.on-dark .btn-paper { border-color: var(--paper); color: var(--ink); }
+.btn-paper { background: var(--light-paper); border-color: var(--light-paper); color: var(--dark-ink); }
+@media (hover: hover) { .btn-paper:hover { background: var(--light); border-color: var(--light); color: var(--dark-ink); } }
+.on-dark .btn { border-color: var(--light); color: var(--light); }
+@media (hover: hover) { .on-dark .btn:hover { background: var(--light); color: var(--dark-ink); } }
+.on-dark .btn-paper { border-color: var(--light-paper); color: var(--dark-ink); }
 .textlink {
   display: inline-flex;
   align-items: center;

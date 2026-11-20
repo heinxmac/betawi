@@ -19,9 +19,12 @@ import Icon from './Icon.astro';
     </nav>
     <a class="btn btn-primary header-book" href="#book" data-book>Book a table</a>
     <div class="quick">
-      <a class="textlink" href={`tel:${restaurant.phone}`}><Icon name="phone" size={18} />Call</a>
-      <a class="textlink" href={restaurant.mapsUrl} target="_blank" rel="noopener"><Icon name="pin" size={18} />Directions</a>
+      <a class="textlink" href={`tel:${restaurant.phone}`}><Icon name="phone" size={18} /><span class="lbl">Call</span></a>
+      <a class="textlink" href={restaurant.mapsUrl} target="_blank" rel="noopener"><Icon name="pin" size={18} /><span class="lbl">Directions</span></a>
     </div>
+    <button type="button" class="theme" data-theme-toggle aria-pressed="false">
+      <span class="moon"><Icon name="moon" size={20} /></span><span class="sun"><Icon name="sun" size={20} /></span><span class="tl">Night mode</span>
+    </button>
   </div>
 </header>
 
@@ -31,13 +34,22 @@ import Icon from './Icon.astro';
   .brand { display: block; line-height: 0; }
   .brand :global(img) { width: auto; height: 64px; }
   .quick { display: flex; align-items: center; gap: 4px 18px; }
-  .quick a { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; white-space: nowrap; }
+  .quick a { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; min-width: 44px; white-space: nowrap; }
+  .theme { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-width: 44px; min-height: 44px; padding: 0; border: 0; background: none; color: var(--ink); font: 600 0.9375rem/1 var(--font-sans); cursor: pointer; }
+  .theme .sun, :global(html[data-theme='night']) .theme .moon { display: none; }
+  :global(html[data-theme='night']) .theme .sun { display: inline-flex; }
+  .theme .moon { display: inline-flex; }
+  .theme .tl { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  @media (max-width: 389px) { .quick .lbl { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; } }
   .links, .header-book { display: none; }
 
   @media (min-width: 720px) {
     .inner { padding-inline: 48px; gap: 32px; justify-content: flex-start; }
     .links { display: flex; gap: 28px; margin-left: auto; }
     .quick { display: none; }
+    .theme { padding: 0 4px; }
+    .links a, .header-book { white-space: nowrap; }
+    .inner { gap: 20px; }
     .header-book {
       display: flex;
       min-height: 44px;
@@ -49,7 +61,30 @@ import Icon from './Icon.astro';
     }
     :global(html[data-actions-away]) .header-book { opacity: 1; visibility: visible; transform: none; }
   }
+  @media (min-width: 1000px) {
+    .inner { gap: 32px; }
+    .theme .tl { position: static; width: auto; height: auto; clip-path: none; overflow: visible; }
+  }
   @media (prefers-reduced-motion: reduce) {
     .header-book { transform: none !important; transition: none !important; }
   }
 </style>
+
+<script>
+  // Night mode switch: saves the choice, keeps the pill and the browser colour in step.
+  const root = document.documentElement;
+  const pill = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
+  const bar = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+  const sync = () => {
+    const night = root.getAttribute('data-theme') === 'night';
+    pill?.setAttribute('aria-pressed', String(night));
+    if (bar) bar.content = night ? '#14221D' : '#EFE4CC';
+  };
+  sync();
+  pill?.addEventListener('click', () => {
+    const night = root.getAttribute('data-theme') !== 'night';
+    if (night) root.setAttribute('data-theme', 'night'); else root.removeAttribute('data-theme');
+    try { localStorage.setItem('betawi-theme', night ? 'night' : 'day'); } catch { /* storage blocked: the choice lasts for this visit */ }
+    sync();
+  });
+</script>
