@@ -4,6 +4,7 @@
 import { Image } from 'astro:assets';
 import logo from '../assets/logo/betawi-logo-wide.png';
 import restaurant from '../content/restaurant.json';
+import Icon from './Icon.astro';
 ---
 
 <header class="site-header">
@@ -17,7 +18,10 @@ import restaurant from '../content/restaurant.json';
       <a class="textlink" href="/#find-us">Find us</a>
     </nav>
     <a class="btn btn-primary header-book" href="#book" data-book>Book a table</a>
-    <a class="textlink call" href={`tel:${restaurant.phone}`}>Call</a>
+    <div class="quick">
+      <a class="textlink" href={`tel:${restaurant.phone}`}><Icon name="phone" size={18} />Call</a>
+      <a class="textlink" href={restaurant.mapsUrl} target="_blank" rel="noopener"><Icon name="pin" size={18} />Directions</a>
+    </div>
   </div>
 </header>
 
@@ -26,13 +30,14 @@ import restaurant from '../content/restaurant.json';
   .inner { display: flex; align-items: center; justify-content: space-between; max-width: 1200px; margin-inline: auto; padding-right: var(--gutter); }
   .brand { display: block; line-height: 0; }
   .brand :global(img) { width: auto; height: 64px; }
-  .call { min-width: 44px; justify-content: center; }
+  .quick { display: flex; align-items: center; gap: 4px 18px; }
+  .quick a { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; white-space: nowrap; }
   .links, .header-book { display: none; }
 
   @media (min-width: 720px) {
-    .inner { padding-right: 48px; gap: 32px; justify-content: flex-start; }
+    .inner { padding-inline: 48px; gap: 32px; justify-content: flex-start; }
     .links { display: flex; gap: 28px; margin-left: auto; }
-    .call { display: none; }
+    .quick { display: none; }
     .header-book {
       display: flex;
       min-height: 44px;

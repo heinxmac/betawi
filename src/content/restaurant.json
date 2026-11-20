@@ -7,13 +7,13 @@
     "Booking rules are assumptions to confirm with Dimple: last table 1 hour before closing (9:30 PM), tables today need 1 hour notice, a table is held 90 minutes, requests open 21 days ahead, up to 12 guests online.",
     "Prices confirmed by heinx on 20 Nov 2026.",
     "Photos are placeholders for the demo (Talabat 400px dishes, 6 stills from the reel). The reel on the first screen is a temporary demo clip.",
-    "WhatsApp PLACEHOLDER (heinx, 20 Nov 2026): set to the landline 97144542329 for now. Replace with the real number before launch. Earlier note: heinx says it is the same number as the studio bot flow; the studio bot handles replies in the background. Leave `whatsapp` empty until heinx gives the number for the sheet fallback."
+    "WhatsApp is the studio#2 number as a placeholder (heinx, 20 Nov 2026). Change it to Betawi's own number at handover."
   ],
   "name": "Betawi Restaurant",
   "shortName": "Betawi",
   "tagline": "Taste of Indonesia",
   "description": "Indonesian home cooking by the lake in JLT. Made by Indonesians, the way it's cooked at home. Since 2007.",
-  "whatsapp": "97144542329",
+  "whatsapp": "971545876520",
   "phone": "+97144542329",
   "phoneDisplay": "04 454 2329",
   "email": "",
@@ -131,8 +131,7 @@
   "story": {
     "headline": "Jakarta cooking in JLT.",
     "paragraphs": [
-      "Betawi is made and owned by Indonesians. The name comes from Batavia, the old name of Jakarta.",
-      "We cook the way Indonesian homes and streets do: soto, rendang, sambal. Indonesian chefs cook each dish fresh, with herbs, spices and sauces from Indonesia."
+      "Betawi is made and owned by Indonesians. The name comes from Batavia, the old name of Jakarta."
     ],
     "sources": [
       {
@@ -155,7 +154,7 @@
       }
     ],
     "toConfirm": true,
-    "pressTitle": "In the press",
+    "pressTitle": "What the press said",
     "press": [
       {
         "who": "Khaleej Times",
@@ -168,6 +167,21 @@
         "when": "June 2019",
         "line": "Delicious Indonesian food, simple, with quick service and a relaxed room.",
         "url": "https://foodkissed.com/exploring-budget-friendly-jlt-dining-can-betawi-cafe-answer-your-indonesian-food-cravings/"
-      }]
+      }
+    ],
+    "steps": [
+      {
+        "when": "2007",
+        "text": "Betawi opens in Dubai, made and owned by Indonesians."
+      },
+      {
+        "when": "The cooking",
+        "text": "We cook the way Indonesian homes and streets do: soto, rendang, sambal. Indonesian chefs cook each dish fresh, with herbs, spices and sauces from Indonesia."
+      },
+      {
+        "when": "Today",
+        "text": "Tables on the terrace by the lake in JLT, with the same cooking."
+      }
+    ]
   }
 }

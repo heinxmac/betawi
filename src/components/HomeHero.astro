@@ -8,23 +8,30 @@ const { rating, phone, phoneDisplay, hours, whatsapp } = restaurant;
 ---
 
 <section class="door">
-  <div class="media">
-    <div class="zoom">
-      <video class="pic" id="hero-video" muted playsinline width="720" height="1280" poster="/media/hero-poster.webp" preload="none" aria-hidden="true" tabindex="-1"><source src="/media/hero-loop.mp4" type="video/mp4" /></video>
+  <div class="stage">
+    <div class="media">
+      <div class="zoom">
+        <video class="pic" id="hero-video" muted playsinline width="720" height="1280" poster="/media/hero-poster.webp" preload="none" aria-hidden="true" tabindex="-1"><source src="/media/hero-loop.mp4" type="video/mp4" /></video>
+      </div>
+      <button type="button" class="tap" id="hero-tap" aria-label="Pause the video" aria-pressed="false" hidden></button>
     </div>
-    <button type="button" class="tap" id="hero-tap" aria-label="Pause the video" aria-pressed="false" hidden></button>
-  </div>
-  <div class="words">
-    <p class="greet" lang="id">Selamat datang</p>
-    <h1 class="display">Rice, sambal and a seat by the lake.</h1>
-    <p class="sub">Made and owned by Indonesians since 2007.</p>
-    <div class="actions" data-hero-actions>
-      <a class="btn btn-primary" href="#book" data-book>Book a table <Icon name="arrow-right" size={18} /></a>
-      <a class="btn" href="/menu/">See the menu</a>
+    <div class="copy">
+      <div class="words">
+        <p class="greet" lang="id">Selamat datang</p>
+        <h1 class="display">Rice, sambal and a seat by the lake.</h1>
+        <p class="sub">Made and owned by Indonesians since 2007.</p>
+      </div>
+      <div class="cta">
+        <div class="actions">
+          <a class="btn btn-primary" href="#book" data-book>Book a table <Icon name="arrow-right" size={18} /></a>
+          <a class="btn" href="/menu/">See the menu</a>
+        </div>
+        <p class="proof"><a href={rating.url} rel="noopener">{rating.score} on Google, {rating.count} reviews</a><span class="dot" aria-hidden="true"> · </span><span>{hours.display}</span></p>
+        <p class="phone"><a class="textlink" href={`tel:${phone}`}><Icon name="phone" size={18} />Call {phoneDisplay}</a>{whatsapp && <a class="textlink" href={`https://wa.me/${whatsapp}`} rel="noopener"><Icon name="whatsapp" size={18} />WhatsApp</a>}</p>
+      </div>
     </div>
-    <p class="proof"><a href={rating.url} rel="noopener">{rating.score} on Google, {rating.count} reviews</a><span class="dot" aria-hidden="true"> · </span><span>{hours.display}</span></p>
-    <p class="phone"><a class="textlink" href={`tel:${phone}`}><Icon name="phone" size={18} />Call {phoneDisplay}</a>{whatsapp && <a class="textlink" href={`https://wa.me/${whatsapp}`} rel="noopener"><Icon name="whatsapp" size={18} />WhatsApp</a>}</p>
   </div>
+  <span class="sentinel" data-hero-actions aria-hidden="true"></span>
 </section>
 
 <style>
@@ -36,7 +43,9 @@ const { rating, phone, phoneDisplay, hours, whatsapp } = restaurant;
   .pic { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 60%; transform-origin: 50% 0; }
   .tap { position: absolute; inset: 0; width: 100%; border: 0; padding: 0; background: transparent; cursor: pointer; z-index: 1; }
   .tap:focus-visible { outline: 3px solid var(--ink); outline-offset: -6px; }
-  .words { position: relative; z-index: 1; margin-top: -64px; padding: 0 var(--gutter) 8px; }
+  .stage { position: relative; }
+  .sentinel { position: absolute; top: 72svh; left: 0; width: 1px; height: 1px; pointer-events: none; }
+  .copy { position: relative; z-index: 1; margin-top: -64px; padding: 0 var(--gutter) 8px; }
   .display { max-width: 12ch; font-size: clamp(2.75rem, 1.6rem + 5.4vw, 5rem); }
   .sub { margin-top: 14px; font: italic 400 1.25rem/1.4 var(--font-display); color: var(--ink); max-width: 26ch; }
   .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 22px; }
@@ -49,7 +58,7 @@ const { rating, phone, phoneDisplay, hours, whatsapp } = restaurant;
   @media (min-width: 768px) {
     .phone { display: flex; }
     .media { height: min(56svh, 560px); }
-    .words { margin-top: -110px; padding-inline: 48px; max-width: 720px; }
+    .copy { margin-top: -110px; padding-inline: 48px; max-width: 720px; }
     .actions { grid-template-columns: max-content max-content; }
     .actions .btn { padding-inline: 40px; }
     .proof { display: block; }
@@ -58,15 +67,34 @@ const { rating, phone, phoneDisplay, hours, whatsapp } = restaurant;
   /* Desktop: the portrait photo sits on the right and fades into the sand on its left edge,
      so it is never stretched wider than it is. */
   @media (min-width: 1000px) {
-    .door { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); height: min(76svh, 720px); align-items: center; }
+    .stage { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); height: min(76svh, 720px); align-items: center; }
     .media { grid-column: 2; grid-row: 1; height: 100%; min-height: 0; }
     .zoom { position: absolute; inset: 0; }
     .media::after { background: linear-gradient(to right, var(--sand) 0%, color-mix(in srgb, var(--sand) 60%, transparent) 14%, transparent 42%); }
     .pic { object-position: 50% 58%; }
-    .words { grid-column: 1; grid-row: 1; margin: 0; padding: 48px 48px 48px max(48px, calc((100vw - 1200px) / 2 + 48px)); max-width: none; }
+    .copy { grid-column: 1; grid-row: 1; margin: 0; padding: 48px 48px 48px max(48px, calc((100vw - 1200px) / 2 + 48px)); max-width: none; }
     .display { max-width: 14ch; font-size: clamp(3.25rem, 1.8rem + 2.6vw, 4.75rem); }
   }
 </style>
+
+<script>
+  // The window's top and bottom edges follow the words above it and the buttons below it, so the
+  // framed clip always fits between them at any phone or tablet width.
+  const stage = document.querySelector<HTMLElement>('.door .stage');
+  const wordsEl = document.querySelector<HTMLElement>('.door .words');
+  const ctaEl = document.querySelector<HTMLElement>('.door .cta');
+  if (stage && wordsEl && ctaEl && 'ResizeObserver' in window) {
+    const fit = () => {
+      if (getComputedStyle(stage).position !== 'sticky') return;
+      stage.style.setProperty('--wt', `${wordsEl.offsetTop + wordsEl.offsetHeight + 16}px`);
+      stage.style.setProperty('--wb', `${stage.offsetHeight - ctaEl.offsetTop + 16}px`);
+    };
+    new ResizeObserver(fit).observe(stage);
+    new ResizeObserver(fit).observe(wordsEl);
+    fit();
+    document.fonts?.ready.then(fit);
+  }
+</script>
 
 <script>
   // The clip plays only when it is allowed: no reduced-motion preference, no Save-Data, not a slow

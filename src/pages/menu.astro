@@ -21,16 +21,19 @@ const lists: Category[] = categories.filter((c) => c.dishes.length > 0);
   <nav class="chips" aria-label="Menu sections">
     <ul>
       {categories.map((c) => (
+        <Fragment>
         <li>
           {c.dishes.length === 0
-            ? <button type="button" class="chip" data-vegan-chip aria-pressed="false">{c.name}</button>
+            ? <button type="button" class="chip" data-filter="vegan" aria-pressed="false">{c.name}</button>
             : <a class="chip" href={`#${c.id}`} data-chip={c.id}>{c.name}</a>}
         </li>
+        {c.dishes.length === 0 && <li><button type="button" class="chip" data-filter="spicy" aria-pressed="false">Spicy</button></li>}
+        </Fragment>
       ))}
     </ul>
   </nav>
 
-  <p class="vegan-note" data-vegan-note hidden>A full vegan list, including a vegan Padang platter.</p>
+  <p class="vegan-note" data-filter-note hidden></p>
 
   <div class="sections">
     {lists.map((c) => (
@@ -51,7 +54,7 @@ const lists: Category[] = categories.filter((c) => c.dishes.length > 0);
 
 <style>
   .head { position: relative; overflow-x: clip; background: var(--clay); color: var(--sand); padding: 40px 0 44px; margin-bottom: 14px; }
-  .head::after { content: ''; position: absolute; left: -20px; right: -20px; bottom: -9px; height: 10px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='10'%3E%3Cpath d='M0 0H20L10 10Z' fill='%238C4F21'/%3E%3C/svg%3E") repeat-x 0 0 / 20px 10px; }
+  .head::after { content: ''; position: absolute; left: -24px; right: -24px; bottom: -13px; height: 14px; background: var(--gb-down-clay) repeat-x 0 0 / 24px 14px; }
   .headin { max-width: 1200px; margin-inline: auto; padding-inline: var(--gutter); }
   h1 { font: 600 clamp(2.5rem, 1.6rem + 4.4vw, 4.5rem) / 1.04 var(--font-display); letter-spacing: -0.015em; }
   .sub { margin-top: 8px; font-size: 1.125rem; }
@@ -59,7 +62,7 @@ const lists: Category[] = categories.filter((c) => c.dishes.length > 0);
   .chips { position: sticky; top: var(--header-h); z-index: 30; background: var(--sand); border-bottom: var(--rule); }
   .chips ul { margin: 0; padding: 0 var(--gutter); display: flex; gap: 24px; overflow-x: auto; scrollbar-width: none; max-width: 1200px; margin-inline: auto; }
   .chips ul::-webkit-scrollbar { display: none; }
-  .chip { flex: none; white-space: nowrap; display: inline-flex; align-items: center; min-height: 48px; padding: 0; border: 0; border-bottom: 3px solid transparent; background: none; color: var(--ink); text-decoration: none; font: 600 1rem/1.2 var(--font-sans); cursor: pointer; margin-bottom: -1px; }
+  .chip { flex: none; white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 48px; padding: 0; border: 0; border-bottom: 3px solid transparent; background: none; color: var(--ink); text-decoration: none; font: 600 1rem/1.2 var(--font-sans); cursor: pointer; margin-bottom: -1px; }
   .chip[aria-current='true'], .chip[aria-pressed='true'] { border-bottom-color: var(--plank); font-weight: 700; }
   .chip[aria-pressed='true'] { color: var(--green); }
   .vegan-note { max-width: 1200px; margin: 16px auto 0; padding-inline: var(--gutter); color: var(--muted); }
@@ -136,33 +139,35 @@ const lists: Category[] = categories.filter((c) => c.dishes.length > 0);
     });
   });
 
-  const veganChip = document.querySelector<HTMLButtonElement>('[data-vegan-chip]');
-  const wantsVegan = location.hash === '#vegan';
-  const note = document.querySelector<HTMLElement>('[data-vegan-note]');
-  veganChip?.addEventListener('click', () => {
-    const on = veganChip.getAttribute('aria-pressed') !== 'true';
-    veganChip.setAttribute('aria-pressed', String(on));
-    if (note) note.hidden = !on;
+  // One filter at a time: Vegan or Spicy hides every row that does not carry the tag.
+  const filterChips = [...document.querySelectorAll<HTMLButtonElement>('[data-filter]')];
+  const note = document.querySelector<HTMLElement>('[data-filter-note]');
+  const notes: Record<string, string> = { vegan: 'A full vegan list, including a vegan Padang platter.', spicy: 'Every dish marked spicy, across the menu.' };
+  const applyFilter = (kind: string | null) => {
+    filterChips.forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.filter === kind)));
+    if (note) { note.hidden = !kind; note.textContent = kind ? notes[kind] : ''; }
     sections.forEach((s) => {
       const rows = [...s.querySelectorAll<HTMLElement>('[data-rows] > li')];
       const more = s.querySelector<HTMLElement>('[data-more]');
       let shown = 0;
       const expanded = 'expanded' in s.dataset;
       rows.forEach((r, i) => {
-        const match = !on || r.hasAttribute('data-vegan');
-        r.hidden = !match || (!on && !expanded && i >= 8);
+        const match = !kind || r.hasAttribute(`data-${kind}`);
+        r.hidden = !match || (!kind && !expanded && i >= 8);
         if (match) shown++;
       });
       s.hidden = shown === 0;
       // A chip for a section the filter emptied would lead nowhere: hide it too.
       const chip = chips.find((c) => c.dataset.chip === s.id);
       if (chip) chip.parentElement!.hidden = s.hidden;
-      if (more) more.hidden = on || expanded;
+      if (more) more.hidden = Boolean(kind) || expanded;
     });
-    // Tapped from deep in the page, the list collapses: go back to the top of the list so the
-    // vegan note and the first vegan rows are in view.
-    if (on) document.querySelector('.head')?.scrollIntoView({ block: 'start' });
+    // Tapped from deep in the page, the list collapses: go back to the top so the note and the
+    // first rows are in view.
+    if (kind) document.querySelector('.head')?.scrollIntoView({ block: 'start' });
     update();
-  });
-  if (wantsVegan) veganChip?.click();
+  };
+  filterChips.forEach((c) => c.addEventListener('click', () => applyFilter(c.getAttribute('aria-pressed') === 'true' ? null : c.dataset.filter!)));
+  if (location.hash === '#vegan') applyFilter('vegan');
+  if (location.hash === '#spicy') applyFilter('spicy');
 </script>

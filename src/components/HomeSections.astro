@@ -20,16 +20,18 @@ const index = categories
     const hi = Math.max(...prices);
     const count = `${c.dishes.length} ${c.dishes.length === 1 ? 'dish' : 'dishes'}`;
     const span = prices.length === 0 ? '' : lo === hi ? money(lo) : `${money(lo)} to ${hi}`;
-    return { name: c.name, href: `/menu/#${c.id}`, meta: span ? `${count}, ${span}` : count };
+    const shot = c.dishes.find((x) => dishPhoto(x.photo));
+    return { name: c.name, href: `/menu/#${c.id}`, meta: span ? `${count}, ${span}` : count, photo: shot ? dishPhoto(shot.photo) : undefined, alt: shot?.name ?? '' };
   });
 const veganCount = allDishes.filter((d) => d.tags.includes('vegan')).length;
-index.splice(index.length - 3, 0, { name: 'Vegan', href: '/menu/#vegan', meta: `${veganCount} dishes across the menu` });
+const veganShot = allDishes.find((d) => d.tags.includes('vegan') && dishPhoto(d.photo));
+index.splice(index.length - 3, 0, { name: 'Vegan', href: '/menu/#vegan', meta: `${veganCount} dishes across the menu`, photo: veganShot ? dishPhoto(veganShot.photo) : undefined, alt: veganShot?.name ?? '' });
 
 const { slotMinutes, lastSeatingBeforeClose } = restaurant.reservations;
 const [ch, cm] = restaurant.hours.closes.split(':').map(Number);
 const lastMin = ch * 60 + cm - lastSeatingBeforeClose;
 const lastTable = `${String(Math.floor(lastMin / 60)).padStart(2, '0')}:${String(lastMin % 60).padStart(2, '0')}`;
-const { address, phoneDisplay, phone, mapsUrl, whatsapp, quote, story, hours, tableOrder, instagram } = restaurant;
+const { address, phoneDisplay, phone, mapsUrl, whatsapp, story, hours, tableOrder, instagram } = restaurant;
 
 // Gallery: terrace stills and dishes, interleaved. Only the first six show until "Show more".
 const t = (n: string, alt: string) => ({ src: terracePhoto(n), alt });
@@ -82,18 +84,21 @@ const gallery = [
     <div class="paras reveal">
       {story.paragraphs.map((p) => <p>{p}</p>)}
     </div>
-    <figure class="quote reveal">
-      <span class="mark" aria-hidden="true">&ldquo;</span>
-      <blockquote>{quote.text}</blockquote>
-      <figcaption>{quote.by}</figcaption>
-    </figure>
+    <ol class="steps" role="list">
+      {story.steps.map((s) => (
+        <li class="step">
+          <b class="when"><span class="mk"><span>{s.when}</span></span></b>
+          <p class="reveal">{s.text}</p>
+        </li>
+      ))}
+    </ol>
     <div class="press reveal">
       <h3>{story.pressTitle}</h3>
       <ul role="list">
         {story.press.map((a) => (
           <li>
             <a href={a.url} rel="noopener"><b>{a.who}</b> <span>{a.when}</span></a>
-            <p>{a.line}</p>
+            <p><em class="short">In short:</em> {a.line}</p>
           </li>
         ))}
       </ul>
@@ -115,7 +120,8 @@ const gallery = [
   <ul class="rows" role="list">
     {index.map((r) => (
       <li>
-        <a href={r.href}>
+        <a href={r.href} data-photo={r.photo ? '' : undefined}>
+          {r.photo && <Image class="t" src={r.photo} alt="" width={72} height={72} widths={[72, 144, 216]} sizes="72px" loading="lazy" />}
           <span class="n">{r.name}</span>
           <span class="m">{r.meta}</span>
           <span class="go" aria-hidden="true"><Icon name="arrow-right" size={20} /></span>
@@ -124,6 +130,12 @@ const gallery = [
     ))}
   </ul>
 </section>
+
+<div class="float" data-float aria-hidden="true">
+  <div class="fin">
+    {index.map((r) => r.photo && <Image class="fimg" src={r.photo} alt="" width={220} height={220} widths={[220, 440]} sizes="220px" loading="lazy" />)}
+  </div>
+</div>
 
 <section class="gallery" aria-labelledby="gal-title">
   <div class="pad head reveal"><h2 id="gal-title" class="headline"><span class="mk"><span>Around the table</span></span></h2></div>
@@ -179,13 +191,17 @@ const gallery = [
 
   /* Bands: the colour layer sits behind and fades in as the band arrives. */
   .bandbg { position: absolute; inset: 0; z-index: -1; }
-  .story, .index { isolation: isolate; color: var(--sand); overflow-x: clip; }
+  .story, .index { isolation: isolate; z-index: 1; color: var(--sand); overflow-x: clip; }
   .index .bandbg { background: var(--clay); }
   .story .bandbg { background: var(--green); }
   /* gigi balang: the tooth edge of Betawi house trim, one row on the top of each band */
-  .bandbg::before { content: ''; position: absolute; left: -20px; right: -20px; top: -9px; height: 10px; background-repeat: repeat-x; background-position: 0 100%; background-size: 20px 10px; }
-  .story .bandbg::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='10'%3E%3Cpath d='M0 10 10 0 20 10Z' fill='%231B4A3F'/%3E%3C/svg%3E"); }
-  .index .bandbg::before { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='10'%3E%3Cpath d='M0 10 10 0 20 10Z' fill='%238C4F21'/%3E%3C/svg%3E"); }
+  .bandbg::before, .bandbg::after { content: ''; position: absolute; left: -24px; right: -24px; height: 14px; background-repeat: repeat-x; background-size: 24px 14px; }
+  .bandbg::before { top: -13px; background-position: 0 100%; }
+  .bandbg::after { bottom: -13px; background-position: 0 0; }
+  .story .bandbg::before { background-image: var(--gb-up-green); }
+  .story .bandbg::after { background-image: var(--gb-down-green); }
+  .index .bandbg::before { background-image: var(--gb-up-clay); }
+  .index .bandbg::after { background-image: var(--gb-down-clay); }
 
   .table { margin-top: 96px; padding-bottom: 104px; }
   .dishrows { padding-inline: var(--gutter); }
@@ -208,6 +224,11 @@ const gallery = [
   .storywrap { display: grid; gap: 40px; max-width: 1200px; margin-inline: auto; }
   .story .headline { max-width: 14ch; font-size: clamp(2rem, 1.3rem + 3.4vw, 3.5rem); }
   .paras { display: grid; gap: 16px; max-width: 46ch; font-size: 1.125rem; line-height: 1.6; }
+  .steps { display: grid; gap: 28px; max-width: 46ch; list-style: none; margin: 0; padding: 0; }
+  .step { position: relative; padding-left: 22px; }
+  .step::before { content: ''; position: absolute; left: 0; top: 6px; bottom: 0; width: 1px; background: color-mix(in srgb, var(--sand) 55%, transparent); transform-origin: 50% 0; }
+  .when { display: block; font: 500 clamp(2rem, 1.4rem + 2.6vw, 3rem)/1.1 var(--font-display); }
+  .step p { margin-top: 6px; font-size: 1.0625rem; line-height: 1.55; }
   .quote { position: relative; padding-top: 20px; }
   .mark { position: absolute; top: -22px; left: -4px; font: 700 8rem/1 var(--font-display); color: var(--turmeric); }
   blockquote { margin: 0; padding-top: 56px; font: italic 400 clamp(1.875rem, 1.2rem + 3vw, 3.5rem) / 1.2 var(--font-display); text-wrap: balance; max-width: 26ch; }
@@ -218,6 +239,7 @@ const gallery = [
   .press a { color: var(--sand); text-underline-offset: 4px; display: inline-flex; flex-wrap: wrap; gap: 4px 10px; min-height: 44px; align-items: center; }
   .press a span { font-size: 0.875rem; opacity: 0.9; }
   .press p { max-width: 40ch; }
+  .press .short { font-style: normal; font-weight: 600; }
 
   .lake { overflow: clip; margin-top: 0; }
   .shot { overflow: clip; }
@@ -231,7 +253,11 @@ const gallery = [
   .index .head { margin-bottom: 20px; }
   .rows { border-top: 1px solid color-mix(in srgb, var(--sand) 40%, transparent); }
   .rows li { position: relative; }
-  .rows a { display: flex; flex-direction: column; gap: 2px; padding: 12px var(--gutter); text-decoration: none; color: var(--sand); min-height: 60px; justify-content: center; }
+  .rows a { display: grid; grid-template-columns: 56px 1fr; grid-template-areas: 't n' 't m'; column-gap: 16px; align-items: center; padding: 12px var(--gutter); text-decoration: none; color: var(--sand); min-height: 80px; }
+  .rows a:not([data-photo]) { grid-template-columns: 1fr; grid-template-areas: 'n' 'm'; }
+  .rows .t { grid-area: t; display: block; width: 56px; height: 56px; object-fit: cover; }
+  .rows .n { grid-area: n; }
+  .rows .m { grid-area: m; }
   .rows a:focus-visible { background: color-mix(in srgb, var(--ink) 25%, transparent); outline-offset: -3px; }
   @media (hover: hover) { .rows a:hover { background: color-mix(in srgb, var(--ink) 25%, transparent); } }
   .rows .n { font: 500 1.5rem/1.2 var(--font-display); }
@@ -268,6 +294,9 @@ const gallery = [
     .storywrap { grid-template-columns: 5fr 6fr; column-gap: 72px; align-items: start; }
     .story .headline { grid-column: 1; }
     .paras { grid-column: 2; grid-row: 1; align-self: end; }
+    .steps { grid-column: 1 / -1; max-width: none; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; }
+    .step { padding: 22px 0 0; }
+    .step::before { left: 0; right: 0; top: 0; bottom: auto; width: auto; height: 1px; transform-origin: 0 50%; }
     .quote { grid-column: 1 / -1; padding-top: 24px; }
     .press { grid-column: 1 / -1; }
     .press ul { grid-template-columns: repeat(2, 1fr); gap: 40px; }
@@ -277,7 +306,8 @@ const gallery = [
     .lake h2 { position: relative; inset: auto; margin: -110px 0 0; padding-inline: 0; max-width: 12ch; font-size: 3rem; }
     .index { padding: 152px 0 112px; }
     .rows { max-width: 1200px; margin-inline: auto; padding-inline: 48px; }
-    .rows a { flex-direction: row; align-items: center; justify-content: space-between; gap: 32px; padding-inline: 0; min-height: 80px; }
+    .rows a { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-inline: 0; min-height: 96px; }
+    .rows .t { width: 72px; height: 72px; flex: none; }
     .rows .n { flex: 1; font-size: 1.875rem; }
     .rows .m { font-size: 1rem; }
     .rows .go { display: inline-flex; }
@@ -286,8 +316,9 @@ const gallery = [
     .galmore .btn { flex: 0 0 auto; padding-inline: 40px; }
     .find { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; max-width: 1200px; margin-inline: auto; padding-inline: 48px; padding-top: 112px; }
     .find .pad { padding-inline: 0; }
+    .find .info { margin-inline: 0; }
     .find .wide { aspect-ratio: 4 / 5; }
-    .find .shot { max-width: 520px; justify-self: end; }
+    .find .shot { width: 100%; max-width: 520px; justify-self: end; }
     .actions { grid-template-columns: 1fr 1fr; }
   }
   @media (min-width: 1000px) {
@@ -299,6 +330,19 @@ const gallery = [
     .dishrows li:nth-child(-n+2) { border-top: var(--rule); }
     .dishrows a { grid-template-columns: 176px 1fr; gap: 24px; }
     .ph, .ph :global(img) { width: 176px; height: 176px; }
+  }
+  /* A photo that follows the pointer over the index, only where there is a fine pointer and motion is
+     allowed. Everywhere else each row shows its own small photo. */
+  .float { display: none; }
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .rows .t { display: none; }
+    .rows a, .rows a:not([data-photo]) { grid-template-columns: 1fr; grid-template-areas: 'n' 'm'; }
+    .float { display: block; position: fixed; left: 0; top: 0; width: 220px; height: 220px; z-index: 50; pointer-events: none; opacity: 0; transition: opacity 0.5s var(--ease); will-change: transform; }
+    .float.on { opacity: 1; }
+    .fin { width: 100%; height: 100%; transform: scale(0.84) rotate(-3deg); transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .float.on .fin { transform: none; }
+    .fimg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.5s var(--ease); }
+    .fimg.cur { opacity: 1; }
   }
   .reserve { background: var(--deep); color: var(--sand); margin-top: 0; padding: 88px 0; }
   .reserve-in { display: grid; gap: 22px; justify-items: start; max-width: 1200px; margin-inline: auto; }
@@ -315,6 +359,34 @@ const gallery = [
 </style>
 
 <script>
+  // Index photo: follows the pointer with a soft lag (transform and opacity only).
+  const floatEl = document.querySelector<HTMLElement>('[data-float]');
+  const indexRows = document.querySelector('.index .rows');
+  if (floatEl && indexRows && matchMedia('(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)').matches) {
+    const imgs = [...floatEl.querySelectorAll<HTMLElement>('.fimg')];
+    const links = [...indexRows.querySelectorAll<HTMLElement>('a[data-photo]')];
+    let tx = 0, ty = 0, x = 0, y = 0, raf = 0, shown = false;
+    const tick = () => {
+      x += (tx - x) * 0.16; y += (ty - y) * 0.16;
+      floatEl.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
+      raf = Math.abs(tx - x) + Math.abs(ty - y) > 0.4 ? requestAnimationFrame(tick) : 0;
+    };
+    const move = (e: PointerEvent) => {
+      tx = e.clientX + 28; ty = e.clientY - 110;
+      if (!shown) { x = tx; y = ty; shown = true; }
+      if (!raf) raf = requestAnimationFrame(tick);
+    };
+    const show = (i: number) => { imgs.forEach((m, k) => m.classList.toggle('cur', k === i)); floatEl.classList.add('on'); };
+    links.forEach((a, i) => {
+      a.addEventListener('pointerenter', () => show(i));
+      a.addEventListener('focus', () => { const r = a.getBoundingClientRect(); tx = r.right - 260; ty = r.top - 60; if (!shown) { x = tx; y = ty; shown = true; } if (!raf) raf = requestAnimationFrame(tick); show(i); });
+      a.addEventListener('blur', () => floatEl.classList.remove('on'));
+    });
+    indexRows.addEventListener('pointermove', (e) => move(e as PointerEvent));
+    indexRows.addEventListener('pointerleave', () => { floatEl.classList.remove('on'); shown = false; });
+    addEventListener('scroll', () => floatEl.classList.remove('on'), { passive: true });
+  }
+
   // Gallery: the extra photos start hidden only when script runs, so without script all show.
   const grid = document.querySelector('[data-gallery]');
   const btn = document.querySelector<HTMLButtonElement>('[data-gallery-more]');

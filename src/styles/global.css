@@ -7,6 +7,14 @@
   never text on a light page and never under sand text (2.8:1 on clay).
 */
 :root {
+  /* gigi balang: the wooden roof trim of Betawi houses, a row of triangles with a round hole cut in each. */
+  --gb-up-green: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='14'%3E%3Cpath fill='%231B4A3F' fill-rule='evenodd' d='M0 14 12 0l12 14ZM12 7.1a2.3 2.3 0 1 0 0 4.6 2.3 2.3 0 1 0 0-4.6Z'/%3E%3C/svg%3E");
+  --gb-up-clay: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='14'%3E%3Cpath fill='%238C4F21' fill-rule='evenodd' d='M0 14 12 0l12 14ZM12 7.1a2.3 2.3 0 1 0 0 4.6 2.3 2.3 0 1 0 0-4.6Z'/%3E%3C/svg%3E");
+  --gb-up-deep: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='14'%3E%3Cpath fill='%23123229' fill-rule='evenodd' d='M0 14 12 0l12 14ZM12 7.1a2.3 2.3 0 1 0 0 4.6 2.3 2.3 0 1 0 0-4.6Z'/%3E%3C/svg%3E");
+  --gb-up-sand: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='14'%3E%3Cpath fill='%23EFE4CC' fill-rule='evenodd' d='M0 14 12 0l12 14ZM12 7.1a2.3 2.3 0 1 0 0 4.6 2.3 2.3 0 1 0 0-4.6Z'/%3E%3C/svg%3E");
+  --gb-down-clay: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='14'%3E%3Cpath fill='%238C4F21' fill-rule='evenodd' d='M0 0h24L12 14ZM12 2.3a2.3 2.3 0 1 0 0 4.6 2.3 2.3 0 1 0 0-4.6Z'/%3E%3C/svg%3E");
+  --gb-down-green: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='14'%3E%3Cpath fill='%231B4A3F' fill-rule='evenodd' d='M0 0h24L12 14ZM12 2.3a2.3 2.3 0 1 0 0 4.6 2.3 2.3 0 1 0 0-4.6Z'/%3E%3C/svg%3E");
+
   --sand: #EFE4CC;
   --paper: #F8F1E2;
   --green: #1B4A3F;
@@ -23,7 +31,7 @@
   --font-sans: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
   --radius: 2px;
-  --gutter: 20px;
+  --gutter: max(20px, env(safe-area-inset-left));
   --header-h: 64px;
   --rule: 1px solid color-mix(in srgb, var(--clay) 40%, transparent);
   --ease: cubic-bezier(0.25, 1, 0.5, 1);

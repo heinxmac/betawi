@@ -13,7 +13,7 @@ const vegan = dish.tags.includes('vegan');
 const spicy = dish.tags.includes('spicy');
 ---
 
-<li class="row" data-vegan={vegan ? '' : undefined}>
+<li class="row" data-vegan={vegan ? '' : undefined} data-spicy={spicy ? '' : undefined}>
   <a href={`/menu/${dish.id}/`} class="link">
     {photo && (
       <Image
@@ -53,7 +53,8 @@ const spicy = dish.tags.includes('spicy');
   .link:focus-visible { background: var(--paper); }
   .thumb { display: block; width: 128px; height: 128px; object-fit: cover; }
   .text { min-width: 0; }
-  .line { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  .line { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; column-gap: 12px; }
+  .line h3 { min-width: 0; }
   h3 { font: 600 1.25rem/1.2 var(--font-display); }
   .price.none { color: var(--muted); font-size: 0.875rem; font-weight: 600; white-space: normal; text-align: right; }
   .desc { color: var(--muted); margin-top: 4px; font-size: 0.9375rem; line-height: 1.45; }

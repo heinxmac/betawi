@@ -40,7 +40,6 @@ const ld = JSON.stringify({
   image: shareImage,
   telephone: restaurant.phone,
   servesCuisine: ['Indonesian'],
-  priceRange: 'AED 50-100',
   acceptsReservations: true,
   hasMap: restaurant.mapsUrl,
   sameAs: [restaurant.instagram.url],
@@ -54,7 +53,7 @@ const pageTitle = title ? `${title} | ${restaurant.shortName}` : `${restaurant.n
 <html lang="en" data-actions-away={barMode !== 'menu' ? '' : undefined}>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     <!-- Preview: never listed. Also set in public/_headers and public/robots.txt. -->
@@ -97,16 +96,17 @@ const pageTitle = title ? `${title} | ${restaurant.shortName}` : `${restaurant.n
   .door .sub { animation: rise 1.3s var(--ease) 0.4s backwards; }
   .door .actions { animation: rise 1.3s var(--ease) 0.6s backwards; }
   .door .proof { animation: rise 1.3s var(--ease) 0.8s backwards; }
-  .door .zoom { animation: settle 2.2s var(--ease) backwards; }
   .door .phone { animation: rise 1.3s var(--ease) 1s backwards; }
+  .door .zoom { animation: settle 2.2s var(--ease) backwards; }
 
   @keyframes settle { from { transform: scale(1.12); } to { transform: none; } }
   @keyframes tile { from { transform: scale(1.14); opacity: 0.4; } to { transform: none; opacity: 1; } }
   @keyframes maskup { from { transform: translateY(108%); } to { transform: none; } }
+  @keyframes drawy { from { transform: scaleY(0); } to { transform: none; } }
   @keyframes draw { from { transform: scaleX(0); } to { transform: none; } }
   @keyframes slidel { from { transform: translateX(-14px); } to { transform: none; } }
   @keyframes slider { from { transform: translateX(14px); } to { transform: none; } }
-  @keyframes teethshift { from { transform: translateX(0); } to { transform: translateX(20px); } }
+  @keyframes teethshift { from { transform: translateX(0); } to { transform: translateX(24px); } }
   @keyframes wordsout { from { transform: none; } to { transform: translateY(-36px); } }
   .mk { display: block; overflow: clip; padding-bottom: 0.14em; margin-bottom: -0.14em; }
   .mk > span { display: block; }
@@ -118,15 +118,15 @@ const pageTitle = title ? `${title} | ${restaurant.shortName}` : `${restaurant.n
 
   @supports ((animation-timeline: view()) and (animation-range: entry)) {
     .reveal { animation: rise linear both; animation-timeline: view(); animation-range: entry 0% entry 65%; }
-    .door .pic { animation: heroout linear both; animation-timeline: view(); animation-range: exit 0% exit 100%; }
     .mk > span { animation: maskup linear both; animation-timeline: view(); animation-range: entry 5% entry 60%; }
     .dishrows li::after, .rows li::after { animation: draw linear both; animation-timeline: view(); animation-range: entry 0% entry 70%; }
     .dishrows li { animation: rise linear both; animation-timeline: view(); animation-range: entry 0% entry 55%; }
     .dishrows .ph img { animation: tile linear both; animation-timeline: view(); animation-range: entry 0% entry 90%; }
     .rows .n { animation: slidel linear both; animation-timeline: view(); animation-range: entry 0% entry 100%; }
     .rows .m { animation: slider linear both; animation-timeline: view(); animation-range: entry 0% entry 100%; }
-    .story .bandbg::before, .index .bandbg::before { animation: teethshift linear both; animation-timeline: --band; animation-range: cover 0% cover 60%; }
-    .door .words { animation: wordsout linear both; animation-timeline: view(); animation-range: exit 0% exit 70%; }
+    .story .bandbg::before, .story .bandbg::after, .index .bandbg::before, .index .bandbg::after { animation: teethshift linear both; animation-timeline: --band; animation-range: cover 0% cover 60%; }
+    .step::before { animation: drawy linear both; animation-timeline: view(); animation-range: entry 0% entry 100%; }
+    @media (min-width: 768px) { .step::before { animation-name: draw; } }
     .row::after { animation: draw linear both; animation-timeline: view(); animation-range: entry 0% entry 70%; }
     .row .thumb { animation: tile linear both; animation-timeline: view(); animation-range: entry 0% entry 90%; }
     .head::after, .top::after { animation: teethshift linear both; animation-timeline: view(); animation-range: exit 0% exit 100%; }
@@ -135,6 +135,36 @@ const pageTitle = title ? `${title} | ${restaurant.shortName}` : `${restaurant.n
     .story .reveal, .index .head, .index .rows { animation: bandtext linear both; animation-timeline: --band; animation-range: cover 6% cover 12%; }
     .grid li img { animation: tile linear both; animation-timeline: view(); animation-range: entry 0% entry 90%; }
     .lake .drift, .find .wide { animation: drift linear both; animation-timeline: view(); animation-range: cover 0% cover 100%; }
+  }
+
+  /* The opening (first screen of the home page). The clip sits in a framed window under the
+     headline. Scrolling the first stretch opens the window to the full screen (clip-path inset,
+     driven by scroll) while the words lift away. The stage is pinned for that stretch only: 70% of
+     a screen on a phone. Without scroll-driven animation, or with reduced motion, none of this
+     applies and the static first screen from HomeHero.astro is what shows. */
+  @supports ((animation-timeline: scroll()) and (animation-range: 0px 10px)) {
+    section.door { --travel: 18svh; --end: 0; height: calc(100svh - var(--header-h, 64px) + var(--travel)); }
+    section.door .stage { position: sticky; top: var(--header-h, 64px); display: block; height: calc(100svh - var(--header-h, 64px)); overflow: clip; --win: var(--wt, 305px) var(--gutter) var(--wb, 190px) var(--gutter); }
+    section.door .stage::after { content: ''; position: absolute; left: -24px; right: -24px; bottom: -1px; height: 14px; z-index: 2; background: var(--gb-up-sand) repeat-x 0 100% / 24px 14px; pointer-events: none; }
+    section.door .sentinel { top: calc(var(--travel) * 0.5); }
+    @keyframes open { from { clip-path: inset(var(--win)); } to { clip-path: inset(var(--end)); } }
+    @keyframes picopen { from { transform: scale(1.16); } to { transform: none; } }
+    @keyframes copyout { to { opacity: 0; transform: translateY(-28px); pointer-events: none; } }
+    section.door .media { position: absolute; inset: 0; height: auto; min-height: 0; clip-path: inset(var(--win)); animation: open cubic-bezier(0.65, 0, 0.35, 1) both; animation-timeline: scroll(root block); animation-range: 0px var(--travel); }
+    section.door .media::after { display: none; }
+    section.door .pic { animation: picopen cubic-bezier(0.65, 0, 0.35, 1) both; animation-timeline: scroll(root block); animation-range: 0px var(--travel); }
+    section.door .copy { position: absolute; inset: 0; margin: 0; max-width: none; padding: 20px var(--gutter) 24px; display: flex; flex-direction: column; justify-content: space-between; pointer-events: none; }
+    section.door .words, section.door .cta { pointer-events: auto; animation: copyout linear both; animation-timeline: scroll(root block); animation-range: 0px calc(var(--travel) * 0.7); }
+    section.door .proof { margin-top: 10px; }
+    @media (max-width: 767px) { section.table[class] { margin-top: 16px; } }
+    @media (max-height: 700px) { section.door .sub { display: none; } }
+    @media (min-width: 768px) { section.door { --travel: 40svh; } section.door .copy { padding-inline: 48px; } section.door .stage { --win: var(--wt, 305px) 48px var(--wb, 190px) 48px; } }
+    @media (min-width: 1000px) {
+      section.door { --travel: 55svh; }
+      section.door .stage { --win: 10% 0 10% calc(54vw - max(0px, (100vw - 960px) / 2)); }
+      section.door .media { inset: 0 max(0px, calc((100vw - 960px) / 2)); }
+      section.door .copy { width: 52%; justify-content: center; gap: 28px; padding: 0 24px 0 max(48px, calc((100vw - 1200px) / 2 + 48px)); }
+    }
   }
 }
     </style>

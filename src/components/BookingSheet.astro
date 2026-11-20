@@ -6,11 +6,13 @@
 // server shows "Request sent". While the keys are not added the server says so, and the sheet
 // shows "Booking opens soon", never a false "sent".
 import restaurant from '../content/restaurant.json';
+import { dishById, aed } from '../lib/menu';
 
 const { reservations, whatsapp, phone, phoneDisplay, booking } = restaurant;
+const combo = dishById('seafood-combo');
 ---
 
-<dialog id="book" class="sheet" aria-labelledby="book-title" data-wa={whatsapp} data-phone={phoneDisplay} data-tel={phone} data-max={reservations.maxParty}>
+<dialog id="book" class="sheet" aria-labelledby="book-title" data-wa={whatsapp} data-phone={phoneDisplay} data-tel={phone} data-max={reservations.maxParty} data-rules={JSON.stringify({ hours: { week: restaurant.hours.week, opens: restaurant.hours.opens, closes: restaurant.hours.closes }, reservations: restaurant.reservations })}>
   <div class="head">
     <h2 id="book-title">Book a table</h2>
     <button type="button" class="close" aria-label="Close" data-close>
@@ -30,6 +32,7 @@ const { reservations, whatsapp, phone, phoneDisplay, booking } = restaurant;
       </fieldset>
       <p class="help">Pick the closest group. You can write the exact number in the notes on the last step.</p>
       <p class="note" data-large hidden></p>
+      {combo && combo.price !== null && <p class="note" data-share hidden>Big table? Start with the <a href={`/menu/${combo.id}/`}>{combo.name}</a> ({aed(combo.price)}, for 2 to 3) and add a few starters and sides to share.</p>}
       <p class="err" data-err="party" hidden></p>
 
       <fieldset class="seat">
@@ -115,7 +118,7 @@ const { reservations, whatsapp, phone, phoneDisplay, booking } = restaurant;
 #book h2 { font: 500 2rem/1.1 var(--font-display); }
 #book h3 { font: 500 1.5rem/1.2 var(--font-display); margin-bottom: 14px; outline: none; }
 #book .close { width: 48px; height: 48px; display: grid; place-items: center; background: none; border: 0; color: var(--ink); cursor: pointer; border-radius: var(--radius); }
-#book form, #book .state { padding: 8px 20px 24px; }
+#book form, #book .state { padding: 8px 20px calc(24px + env(safe-area-inset-bottom)); }
 #book .progress { height: 3px; background: color-mix(in srgb, var(--plank) 30%, transparent); margin-top: 8px; }
 #book .progress span { display: block; height: 100%; width: 100%; transform-origin: left; transform: scaleX(0.3333); background: var(--clay); transition: transform 0.7s var(--ease); }
 #book .stepline { margin-top: 10px; font-size: 0.875rem; font-weight: 600; color: var(--muted); }
@@ -147,6 +150,7 @@ const { reservations, whatsapp, phone, phoneDisplay, booking } = restaurant;
 #book .chips input:focus-visible + span { outline: 3px solid var(--ink); outline-offset: 2px; }
 #book .chips input:disabled + span { background: transparent; color: color-mix(in srgb, var(--muted) 70%, transparent); border-style: dashed; cursor: not-allowed; text-decoration: line-through; }
 #book .cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; margin-top: 10px; }
+@media (max-width: 380px) { #book .cal { gap: 4px; } }
 #book .cal .wd { text-align: center; font: 600 0.875rem/1 var(--font-sans); color: var(--muted); padding-bottom: 2px; }
 #book .cal .mo { grid-column: 1 / -1; margin-top: 12px; font: 500 1.25rem/1.2 var(--font-display); }
 #book .cal label { margin: 0; position: relative; }
@@ -190,10 +194,10 @@ const { reservations, whatsapp, phone, phoneDisplay, booking } = restaurant;
 
 <script>
   import { bookableDays, dayLabel, dubaiClock, slotOpen, slotTimes, timeLabel } from '../lib/slots.js';
-  import restaurant from '../content/restaurant.json';
 
   const dialog = document.getElementById('book') as HTMLDialogElement | null;
   if (dialog) {
+    const restaurant = JSON.parse(dialog.dataset.rules!);
     const $ = <T extends HTMLElement = HTMLElement>(sel: string) => dialog.querySelector<T>(sel)!;
     const $$ = <T extends HTMLElement = HTMLElement>(sel: string) => [...dialog.querySelectorAll<T>(sel)];
     const form = $<HTMLFormElement>('[data-form]');
@@ -244,9 +248,11 @@ const { reservations, whatsapp, phone, phoneDisplay, booking } = restaurant;
       partyBox.insertAdjacentHTML('beforeend', labels.join(''));
     };
     const large = $('[data-large]');
+    const share = document.querySelector<HTMLElement>('[data-share]');
     const showLarge = () => {
       const on = draft.party === 'more';
       large.hidden = !on;
+      if (share) share.hidden = !(on || Number(draft.party) >= 8);
       if (on) {
         large.innerHTML = `For more than ${max} guests, call us on <a href="tel:${tel}">${phoneText}</a>` + (wa ? ` or <a href="https://wa.me/${wa}" rel="noopener">message us on WhatsApp</a>` : '') + ' and we will plan your table together.';
       }
