@@ -2,10 +2,14 @@
 // /menu: every section on one page, sticky chips, a Vegan chip that filters, "Show all" after 8.
 import Base from '../layouts/Base.astro';
 import DishRow from '../components/DishRow.astro';
+import SambalStrip from '../components/SambalStrip.astro';
+import Icon from '../components/Icon.astro';
+import restaurant from '../content/restaurant.json';
 import { categories, pricesConfirmed } from '../lib/menu';
 import type { Category } from '../lib/menu';
 
 const LIMIT = 8;
+const wa = restaurant.whatsapp;
 const lists: Category[] = categories.filter((c) => c.dishes.length > 0);
 ---
 
@@ -17,6 +21,17 @@ const lists: Category[] = categories.filter((c) => c.dishes.length > 0);
       {!pricesConfirmed && <p class="sub">Preview prices, to be confirmed.</p>}
     </div>
   </div>
+
+  <search class="finder" role="search">
+    <div class="field">
+      <label class="visually-hidden" for="menu-q">Search the menu</label>
+      <span class="mag" aria-hidden="true"><Icon name="search" size={20} /></span>
+      <input id="menu-q" type="search" name="q" placeholder="Search the menu" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" enterkeyhint="search" />
+      <button type="button" class="clear" aria-label="Clear search" hidden><Icon name="close" size={20} /></button>
+    </div>
+    <p class="count" role="status" aria-live="polite" data-count></p>
+    <p class="empty" data-empty hidden>Nothing called that yet. {wa ? <a class="textlink" href={`https://wa.me/${wa}`} rel="noopener">Ask us on WhatsApp</a> : 'Ask us.'}</p>
+  </search>
 
   <nav class="chips" aria-label="Menu sections">
     <ul>
@@ -39,6 +54,7 @@ const lists: Category[] = categories.filter((c) => c.dishes.length > 0);
     {lists.map((c) => (
       <section id={c.id} class="section" data-section>
         <h2 class="headline"><span class="mk"><span>{c.name}</span></span></h2>
+        {c.id === 'sides' && <SambalStrip />}
         <ul class="rows" data-rows>
           {c.dishes.map((d, i) => (
             <Fragment><DishRow dish={d} /></Fragment>
@@ -65,6 +81,17 @@ const lists: Category[] = categories.filter((c) => c.dishes.length > 0);
   .chip { flex: none; white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 48px; padding: 0; border: 0; border-bottom: 3px solid transparent; background: none; color: var(--ink); text-decoration: none; font: 600 1rem/1.2 var(--font-sans); cursor: pointer; margin-bottom: -1px; }
   .chip[aria-current='true'], .chip[aria-pressed='true'] { border-bottom-color: var(--plank); font-weight: 700; }
   .chip[aria-pressed='true'] { color: var(--green-text); }
+  .finder { display: block; max-width: 1200px; margin: 28px auto 0; padding-inline: var(--gutter); }
+  .field { position: relative; }
+  .mag { position: absolute; left: 14px; top: 0; bottom: 0; display: grid; place-items: center; color: var(--clay); pointer-events: none; }
+  #menu-q { width: 100%; min-height: 52px; padding: 0 52px 0 46px; border: 1px solid var(--clay); border-radius: var(--radius); background: var(--paper); color: var(--ink); font: inherit; font-size: max(1rem, 1em); appearance: none; }
+  #menu-q::-webkit-search-cancel-button { display: none; }
+  #menu-q::placeholder { color: var(--muted); opacity: 1; }
+  #menu-q:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+  .clear { position: absolute; right: 0; top: 0; bottom: 0; width: 52px; display: grid; place-items: center; border: 0; background: none; color: var(--ink); cursor: pointer; }
+  .clear:focus-visible { outline: 3px solid var(--ink); outline-offset: -6px; }
+  .count { min-height: 1.5em; margin-top: 8px; font-size: 0.9375rem; color: var(--muted); }
+  .empty { margin-top: 4px; font-size: 1.0625rem; }
   .vegan-note { max-width: 1200px; margin: 16px auto 0; padding-inline: var(--gutter); color: var(--muted); }
   .sections { max-width: 1200px; margin-inline: auto; padding-bottom: 96px; }
   .section { padding-top: 40px; scroll-margin-top: calc(var(--header-h) + 72px); }
@@ -73,7 +100,8 @@ const lists: Category[] = categories.filter((c) => c.dishes.length > 0);
   .more { display: flex; align-items: center; justify-content: center; margin: 16px var(--gutter) 0; min-height: 56px; width: calc(100% - 2 * var(--gutter)); border: 1px solid var(--ink); border-radius: var(--radius); background: transparent; color: var(--ink); font: 600 0.9375rem/1.2 var(--font-sans); letter-spacing: 0.03em; cursor: pointer; }
   @media (hover: hover) { .more:hover { background: var(--ink); color: var(--sand); } }
   @media (min-width: 720px) {
-    .headin, .section > .headline, .vegan-note { padding-inline: 48px; }
+    .headin, .section > .headline, .vegan-note, .finder { padding-inline: 48px; }
+    .field { max-width: 560px; }
     .chips ul { padding-inline: 48px; flex-wrap: wrap; overflow: visible; gap: 4px 28px; }
     .rows { display: grid; grid-template-columns: 1fr 1fr; column-gap: 32px; margin-inline: 28px; align-items: start; }
     .more { margin-inline: 48px; width: auto; padding: 0 40px; display: inline-flex; }
@@ -139,35 +167,63 @@ const lists: Category[] = categories.filter((c) => c.dishes.length > 0);
     });
   });
 
-  // One filter at a time: Vegan or Spicy hides every row that does not carry the tag.
+  // Filters: one chip (Vegan or Spicy) and a text search. A dish shows only when both match.
+  const norm = (t: string) => t.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
   const filterChips = [...document.querySelectorAll<HTMLButtonElement>('[data-filter]')];
   const note = document.querySelector<HTMLElement>('[data-filter-note]');
+  const input = document.getElementById('menu-q') as HTMLInputElement;
+  const clearBtn = document.querySelector<HTMLButtonElement>('.clear')!;
+  const countEl = document.querySelector<HTMLElement>('[data-count]')!;
+  const emptyEl = document.querySelector<HTMLElement>('[data-empty]')!;
   const notes: Record<string, string> = { vegan: 'A full vegan list, including a vegan Padang platter.', spicy: 'Every dish marked spicy, across the menu.' };
-  const applyFilter = (kind: string | null) => {
+  sections.forEach((s) => s.querySelectorAll<HTMLElement>('[data-rows] > li').forEach((r) => {
+    r.dataset.s = norm(`${r.querySelector('h3')?.textContent ?? ''} ${r.querySelector('.desc')?.textContent ?? ''}`);
+  }));
+  let kind: string | null = null;
+  let said = 0;
+  const say = (text: string) => {
+    // Announce once typing pauses, so a screen reader does not read every keystroke.
+    clearTimeout(said);
+    said = window.setTimeout(() => { countEl.textContent = text; }, 450);
+  };
+  const apply = (jump = false) => {
+    const q = input.value;
+    const tokens = norm(q).trim().split(/\s+/).filter(Boolean);
+    const active = Boolean(kind) || tokens.length > 0;
+    let total = 0;
     filterChips.forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.filter === kind)));
-    if (note) { note.hidden = !kind; note.textContent = kind ? notes[kind] : ''; }
     sections.forEach((s) => {
       const rows = [...s.querySelectorAll<HTMLElement>('[data-rows] > li')];
       const more = s.querySelector<HTMLElement>('[data-more]');
-      let shown = 0;
       const expanded = 'expanded' in s.dataset;
+      let shown = 0;
       rows.forEach((r, i) => {
-        const match = !kind || r.hasAttribute(`data-${kind}`);
-        r.hidden = !match || (!kind && !expanded && i >= 8);
+        const match = (!kind || r.hasAttribute(`data-${kind}`)) && tokens.every((t) => r.dataset.s!.includes(t));
+        // The "show all after 8" limit applies only when nothing is filtered, so a match is never hidden by it.
+        r.hidden = !match || (!active && !expanded && i >= 8);
         if (match) shown++;
       });
+      total += shown;
       s.hidden = shown === 0;
+      s.querySelectorAll<HTMLElement>('[data-strip]').forEach((el) => (el.hidden = active));
       // A chip for a section the filter emptied would lead nowhere: hide it too.
       const chip = chips.find((c) => c.dataset.chip === s.id);
       if (chip) chip.parentElement!.hidden = s.hidden;
-      if (more) more.hidden = Boolean(kind) || expanded;
+      if (more) more.hidden = active || expanded;
     });
-    // Tapped from deep in the page, the list collapses: go back to the top so the note and the
-    // first rows are in view.
-    if (kind) document.querySelector('.head')?.scrollIntoView({ block: 'start' });
+    if (note) { note.hidden = !kind; note.textContent = kind ? notes[kind] : ''; }
+    emptyEl.hidden = !(active && total === 0);
+    clearBtn.hidden = !q;
+    if (!active) { clearTimeout(said); countEl.textContent = ''; }
+    else say(`${total} ${total === 1 ? 'dish' : 'dishes'}${tokens.length ? ` for \u201c${q.trim()}\u201d` : ''}`);
+    // Tapped from deep in the page, the list collapses: go back to the top so the note and the first rows are in view.
+    if (jump && kind) document.querySelector('.head')?.scrollIntoView({ block: 'start' });
     update();
   };
-  filterChips.forEach((c) => c.addEventListener('click', () => applyFilter(c.getAttribute('aria-pressed') === 'true' ? null : c.dataset.filter!)));
-  if (location.hash === '#vegan') applyFilter('vegan');
-  if (location.hash === '#spicy') applyFilter('spicy');
+  filterChips.forEach((c) => c.addEventListener('click', () => { kind = c.getAttribute('aria-pressed') === 'true' ? null : c.dataset.filter!; apply(true); }));
+  input.addEventListener('input', () => apply());
+  input.addEventListener('keydown', (e) => { if (e.key === 'Escape' && input.value) { e.preventDefault(); input.value = ''; apply(); } });
+  clearBtn.addEventListener('click', () => { input.value = ''; apply(); input.focus(); });
+  if (location.hash === '#vegan') { kind = 'vegan'; apply(true); }
+  if (location.hash === '#spicy') { kind = 'spicy'; apply(true); }
 </script>

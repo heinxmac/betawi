@@ -1,0 +1,57 @@
+---
+// "Know your sambals": the sambals Betawi sells, each with its own photo and a link to its dish page.
+// Sambal Ijo is not a side on the menu: it comes on the Bebek Sambal Ijo, so that card shows that dish.
+// "Comes with" lists dishes whose names carry the sambal's name (nothing else is claimed).
+import { Image } from 'astro:assets';
+import { allDishes, dishById, dishPhoto, aed } from '../lib/menu';
+
+const cards = [
+  { id: 'sambal-matah', key: 'matah', line: 'Raw shallot, lemongrass and chilli.' },
+  { id: 'bebek-sambal-ijo', key: 'ijo', name: 'Sambal Ijo', line: 'Green chilli. It comes on the duck.' },
+  { id: 'sambal-geprek', key: 'geprek', line: 'Chilli crushed with the fried chicken.' },
+  { id: 'sambal-penyet', key: 'penyet', line: 'Smashed chilli, served with the smashed dish.' },
+].flatMap((c) => {
+  const dish = dishById(c.id);
+  if (!dish) return [];
+  const withDishes = allDishes.filter((d) => d.id !== dish.id && !d.id.startsWith('sambal-') && d.name.toLowerCase().includes(c.key));
+  return [{ ...c, dish, name: c.name ?? dish.name, photo: dishPhoto(dish.photo), withDishes }];
+});
+---
+
+<aside class="sambals" aria-labelledby="sam-title" data-strip>
+  <h3 id="sam-title">Know your sambals</h3>
+  <ul class="row" role="list" tabindex="0" aria-label="Sambals, scroll sideways">
+    {cards.map((c) => (
+      <li>
+        <a href={`/menu/${c.dish.id}/`}>
+          {c.photo && <Image class="ph" src={c.photo} alt="" width={148} height={148} widths={[148, 296, 400]} sizes="148px" loading="lazy" />}
+          <span class="name">{c.name}</span>
+          <span class="line">{c.line}</span>
+          <span class="price">{c.dish.id.startsWith('sambal-') ? aed(c.dish.price) : `${c.dish.name}, ${aed(c.dish.price)}`}</span>
+          {c.withDishes.length > 0 && <span class="with">Comes with: {c.withDishes.map((d) => d.name).join(', ')}</span>}
+        </a>
+      </li>
+    ))}
+  </ul>
+</aside>
+
+<style>
+  .sambals { margin: 8px 0 20px; }
+  h3 { padding-inline: var(--gutter); font: 500 1.375rem/1.2 var(--font-display); margin-bottom: 12px; }
+  .row { display: flex; gap: 12px; margin: 0; padding: 4px var(--gutter) 8px; list-style: none; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gutter); scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--clay) 45%, transparent) transparent; overscroll-behavior-x: contain; }
+  .row:focus-visible { outline: 3px solid var(--ink); outline-offset: -3px; }
+  li { flex: 0 0 min(68vw, 232px); scroll-snap-align: start; }
+  a { display: grid; gap: 4px; align-content: start; height: 100%; padding: 12px; border: 1px solid color-mix(in srgb, var(--clay) 40%, transparent); background: var(--paper); color: var(--ink); text-decoration: none; }
+  .ph { display: block; width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; margin-bottom: 6px; }
+  .name { font: 600 1.125rem/1.2 var(--font-display); }
+  .line { font-size: 0.9375rem; line-height: 1.4; color: var(--muted); }
+  .price { font-weight: 600; font-size: 0.9375rem; color: var(--clay); }
+  .with { font-size: 0.875rem; line-height: 1.4; color: var(--muted); }
+  a:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+  @media (hover: hover) { a:hover { background: var(--sand); } }
+  @media (min-width: 720px) {
+    h3 { padding-inline: 48px; }
+    .row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); overflow: visible; padding-inline: 48px; }
+    li { flex: none; }
+  }
+</style>

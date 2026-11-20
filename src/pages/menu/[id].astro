@@ -42,6 +42,7 @@ const description = dish.desc ? `${dish.name}, ${aed(dish.price) || 'price to co
           style={`view-transition-name: dish-${dish.id}`}
         />
       )}
+      {!photo && <div class="photo tile" aria-hidden="true">Photo soon</div>}
       <div class="info">
         <h1 class="display">{dish.name}</h1>
         <p class={dish.price === null ? 'price big none' : 'price big'}>{dish.price === null ? 'Price to confirm' : aed(dish.price)}</p>
@@ -90,6 +91,7 @@ const description = dish.desc ? `${dish.name}, ${aed(dish.price) || 'price to co
   .top .textlink { color: var(--light); text-decoration-color: color-mix(in srgb, var(--light) 60%, transparent); }
   .back { padding: 4px var(--gutter) 8px; }
   .photo { display: block; width: min(240px, calc(100% - 2 * var(--gutter))); max-width: 400px; aspect-ratio: 1; height: auto; object-fit: cover; margin-inline: var(--gutter); }
+  .photo.tile { display: grid; }
   .info { padding: 24px var(--gutter) 0; display: grid; gap: 12px; justify-items: start; }
   .display { font-size: clamp(2.25rem, 1.5rem + 3.6vw, 3.75rem); }
   .big { font-size: 1.5rem; color: var(--light-paper); }

@@ -167,3 +167,9 @@ html { scrollbar-width: thin; scrollbar-color: var(--clay) var(--sand); accent-c
 .ic { flex: none; transition: transform 0.45s var(--ease); }
 @media (hover: hover) { .btn:hover .ic, .go-link:hover .ic { transform: translateX(3px); } }
 .textlink .ic { margin-right: 8px; }
+
+/* "Photo soon": the slot of a dish that has no photo yet. The roof-trim pattern and two words, never a drawing of food. */
+.tile { position: relative; display: grid; place-items: center; overflow: clip; background: var(--paper); border: 1px solid color-mix(in srgb, var(--clay) 30%, transparent); color: var(--muted); font: 600 0.8125rem/1.2 var(--font-sans); text-align: center; }
+.tile::before, .tile::after { content: ''; position: absolute; left: 0; right: 0; height: 14px; background-repeat: repeat-x; background-size: 24px 14px; }
+.tile::before { top: 0; background-image: var(--gb-down-clay); background-position: center top; }
+.tile::after { bottom: 0; background-image: var(--gb-up-clay); background-position: center bottom; }

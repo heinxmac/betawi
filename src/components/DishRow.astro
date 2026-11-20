@@ -15,6 +15,7 @@ const spicy = dish.tags.includes('spicy');
 
 <li class="row" data-vegan={vegan ? '' : undefined} data-spicy={spicy ? '' : undefined}>
   <a href={`/menu/${dish.id}/`} class="link">
+    {!photo && <div class="thumb tile" aria-hidden="true">Photo soon</div>}
     {photo && (
       <Image
         src={photo}
@@ -48,10 +49,10 @@ const spicy = dish.tags.includes('spicy');
   .row { display: flex; position: relative; }
   .row::after { content: ''; position: absolute; left: var(--gutter); right: var(--gutter); bottom: 0; height: 1px; background: color-mix(in srgb, var(--clay) 40%, transparent); transform-origin: 0 50%; }
   .link { flex: 1; display: grid; grid-template-columns: 128px 1fr; gap: 18px; align-items: start; padding: 16px var(--gutter); text-decoration: none; color: inherit; }
-  .row:not(:has(.thumb)) .link { grid-template-columns: 1fr; }
   @media (hover: hover) { .link:hover { background: var(--paper); } }
   .link:focus-visible { background: var(--paper); }
   .thumb { display: block; width: 128px; height: 128px; object-fit: cover; }
+  .thumb.tile { display: grid; }
   .text { min-width: 0; }
   .line { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; column-gap: 12px; }
   .line h3 { min-width: 0; }
@@ -64,7 +65,6 @@ const spicy = dish.tags.includes('spicy');
   .tag.vegan, .tag.pick { color: var(--green-text); }
   @media (min-width: 720px) {
     .link { grid-template-columns: 176px 1fr; gap: 24px; padding-block: 20px; }
-    .row:not(:has(.thumb)) .link { grid-template-columns: 1fr; }
     .thumb { width: 176px; height: 176px; }
   }
 </style>
